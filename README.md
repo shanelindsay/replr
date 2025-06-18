@@ -1,6 +1,6 @@
-# rjsonsrv
+# replr
 
-**rjsonsrv** provides a simple HTTP server for evaluating R code and returning structured JSON results. It is designed for small automation tasks or remote evaluation from other languages.
+**replr** provides a simple HTTP server for evaluating R code and returning structured JSON results. It is designed for small automation tasks or remote evaluation from other languages.
 
 ## Installation with micromamba
 
@@ -14,7 +14,7 @@
    ```
 3. Install the package from GitHub:
    ```R
-   devtools::install_github("yourusername/rjsonsrv")
+   devtools::install_github("yourusername/replr")
    ```
 
 ## Basic usage
@@ -22,7 +22,7 @@
 Start the server and execute some code:
 
 ```R
-library(rjsonsrv)
+library(replr)
 
 start_server(port = 8080, background = TRUE)
 

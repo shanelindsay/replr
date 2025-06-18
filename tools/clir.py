@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Simple cross-platform CLI for r_json_server."""
+"""Simple cross-platform CLI for replr_server."""
 
 import argparse
 import json
@@ -10,7 +10,7 @@ from typing import Dict, Tuple
 
 import requests
 
-CONFIG_DIR = os.path.expanduser("~/.rjson")
+CONFIG_DIR = os.path.expanduser("~/.replr")
 INST_FILE = os.path.join(CONFIG_DIR, "instances")
 DEFAULT_PORT = 8080
 
@@ -41,7 +41,7 @@ def start(label: str, port: int) -> None:
     inst = load_instances()
     proc = subprocess.Popen([
         "Rscript",
-        "r_json_server.R",
+        "replr_server.R",
         "--background",
         "--port",
         str(port),

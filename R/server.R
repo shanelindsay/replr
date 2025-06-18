@@ -1,5 +1,5 @@
 start_server <- function(port = 8080, background = FALSE) {
-  script <- system.file("scripts", "r_json_server.R", package = "rjsonsrv")
+  script <- system.file("scripts", "replr_server.R", package = "replr")
   cmd <- sprintf('Rscript "%s" --port %d %s',
                  script, as.integer(port),
                  if (background) "--background" else "")
