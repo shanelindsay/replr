@@ -12,3 +12,7 @@ dependencies:
   #- r-curl            # Robust HTTP requests
   #  - r-essentials     # Includes tidyverse, RStudio, etc.
   # - compilers       # Optional: Needed for building packages from source
+
+# repl 
+  - httpuv
+  - jsonlite
