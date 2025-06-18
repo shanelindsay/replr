@@ -24,3 +24,13 @@ test_that("warnings can be suppressed", {
   res <- replr::exec_code("warning('a'); 1", port=8125, warnings = FALSE)
   expect_false("warning" %in% names(res))
 })
+
+test_that("errors are captured correctly", {
+  skip_on_cran()
+  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8126, "--background"))
+  on.exit(ps$kill())
+  Sys.sleep(1)
+  res <- replr::exec_code("log('foo')", port=8126)
+  expect_equal(res$output, "")
+  expect_match(res$error, "non-numeric")
+})

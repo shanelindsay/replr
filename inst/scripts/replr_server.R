@@ -115,7 +115,7 @@ capture_output <- function(expr) {
       }
     }, error = function(e) {
       sink(error_conn, type = "message")
-      cat("Error: ", conditionMessage(e), "\n")
+      message("Error: ", conditionMessage(e))
       sink(NULL, type = "message")
     }),
     warning = function(w) {
