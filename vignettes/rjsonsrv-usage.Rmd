@@ -1,0 +1,101 @@
+---
+title: "rjsonsrv: A Local JSON REPL"
+author: "Package Maintainer"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{rjsonsrv: A Local JSON REPL}
+  %\VignetteEngine{rmarkdown::html_vignette}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+# Introduction
+
+`rjsonsrv` provides a lightweight HTTP server that executes R code and returns
+structured JSON responses. This vignette demonstrates the core features for
+interacting with the server from R.
+
+# Starting and Stopping the Server
+
+Use `start_server()` to launch the HTTP server. By default it listens on port
+8080. To run the server in the background, set `background = TRUE`.
+
+```{r start-server, eval=FALSE}
+# start the server on port 8123
+rjsonsrv::start_server(port = 8123, background = TRUE)
+```
+
+Check that the server is running with `server_status()`.
+
+```{r status, eval=FALSE}
+rjsonsrv::server_status(port = 8123)
+```
+
+To stop the server, call `stop_server()`.
+
+```{r stop-server, eval=FALSE}
+rjsonsrv::stop_server(port = 8123)
+```
+
+# Executing Code
+
+`exec_code()` sends R expressions to the server for evaluation. The response is
+a list that can include standard output, warnings, errors, plot paths and a
+summary of the result.
+
+```{r exec-code, eval=FALSE}
+res <- rjsonsrv::exec_code("1 + 1", port = 8123)
+str(res)
+```
+
+## Controlling the Output
+
+Several arguments let you tailor the response:
+
+- `plain`: return the result as plain text.
+- `summary`: include a summary of the returned value.
+- `output`, `warnings`, `error`: toggle these fields in the response.
+
+```{r custom-call, eval=FALSE}
+# return only the calculated value as plain text
+rjsonsrv::exec_code("sqrt(25)", port = 8123, plain = TRUE)
+```
+
+# Converting to a Tibble
+
+The response object has an S3 method `as_tibble()` which converts the result to
+an easy-to-work-with tibble.
+
+```{r as-tibble, eval=FALSE}
+res <- rjsonsrv::exec_code("summary(lm(mpg ~ cyl, data = mtcars))", port = 8123)
+
+tibble <- as_tibble(res)
+tibble
+```
+
+# Example Session
+
+Below is a typical interactive session that showcases multiple commands.
+
+```{r session-example, eval=FALSE}
+library(rjsonsrv)
+
+start_server(port = 8123, background = TRUE)
+
+exec_code("mean(1:5)", port = 8123)
+exec_code("plot(1:10)", port = 8123)
+exec_code("warning('demo')", port = 8123)
+
+stop_server(port = 8123)
+```
+
+# Conclusion
+
+`rjsonsrv` makes it easy to evaluate R code from external clients or scripts and
+receive structured JSON responses. This vignette covered starting the server,
+executing code with different options, and converting results for further
+analysis.
+
