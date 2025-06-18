@@ -265,6 +265,8 @@ process_request <- function(req) {
         }
         if (plain_text) {
           text_body <- character()
+          if (!is.null(result$result))
+            text_body <- c(text_body, paste(capture.output(result$result), collapse = "\n"))
           if (include_output && nchar(result$output) > 0) text_body <- c(text_body, result$output)
           if (include_warnings && length(result$warning) > 0) text_body <- c(text_body, paste("Warnings:", paste(result$warning, collapse = "\n")))
           if (include_error && nchar(result$error) > 0) text_body <- c(text_body, paste("Error:", result$error))
