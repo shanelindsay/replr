@@ -88,7 +88,7 @@ capture_output <- function(expr) {
   temp_output <- NULL
   temp_error <- NULL
   temp_plot <- NULL
-  temp_warning <- NULL
+  temp_warning <- character()
   temp_result <- NULL
 
   output_conn <- textConnection("temp_output", "w", local = TRUE)
@@ -105,10 +105,11 @@ capture_output <- function(expr) {
   withCallingHandlers(
     tryCatch({
       temp_result <- eval(parse(text = expr), envir = .GlobalEnv)
-      if (dev.cur() > 1 && length(recordPlot()) > 0) {
+      rec_plot <- recordPlot()
+      if (dev.cur() > 1 && inherits(rec_plot, "recordedplot")) {
         plot_file <- file.path(img_dir, paste0("plot_", format(Sys.time(), "%Y%m%d_%H%M%S_"), plot_index, ".png"))
         png(file = plot_file, width = 800, height = 600)
-        replayPlot(recordPlot())
+        replayPlot(rec_plot)
         dev.off()
         plot_files <- c(plot_files, plot_file)
         plot_index <- plot_index + 1

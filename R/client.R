@@ -17,7 +17,9 @@ exec_code <- function(code, port = 8080, plain = FALSE, summary = TRUE,
   if (plain) {
     httr::content(res, as = "text", encoding = "UTF-8")
   } else {
-    jsonlite::fromJSON(httr::content(res, as = "text", encoding = "UTF-8"), simplifyVector = FALSE)
+    out <- jsonlite::fromJSON(httr::content(res, as = "text", encoding = "UTF-8"), simplifyVector = FALSE)
+    if (!warnings) out$warning <- NULL
+    out
   }
 }
 
