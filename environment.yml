@@ -15,3 +15,4 @@ dependencies:
   ## repl specific 
   - r-httpuv
   - r-jsonlite
+  - r-httr
