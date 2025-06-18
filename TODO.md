@@ -8,3 +8,4 @@
 
 - Add GitHub Actions workflow for automated testing.
 - Provide R helper and CLI command for the `/state` endpoint.
+- Use `httpuv::runServer()` with `later` for the heartbeat to avoid busy waiting.
