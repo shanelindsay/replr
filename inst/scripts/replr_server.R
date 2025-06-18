@@ -88,7 +88,7 @@ capture_output <- function(expr) {
   temp_output <- NULL
   temp_error <- NULL
   temp_plot <- NULL
-  temp_warning <- NULL
+  temp_warning <- character()
   temp_result <- NULL
 
   output_conn <- textConnection("temp_output", "w", local = TRUE)
