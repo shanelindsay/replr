@@ -3,16 +3,15 @@ channels:
   - conda-forge
 dependencies:
   - r-base
-  - r-tidyverse       # ggplot2, dplyr, tidyr, readr, etc.
+  # - r-tidyverse       # ggplot2, dplyr, tidyr, readr, etc.
+  - r-pak
   - r-devtools        # Package development (e.g. install_github)
   #- r-rmarkdown       # Reproducible reports
-  - r-knitr           # R Markdown rendering
+  # - r-knitr           # R Markdown rendering
   - r-testthat        # Unit testing
   - r-renv            # Local dependency management
-  #- r-curl            # Robust HTTP requests
   #  - r-essentials     # Includes tidyverse, RStudio, etc.
   # - compilers       # Optional: Needed for building packages from source
-
-# repl 
-  - httpuv
-  - jsonlite
+  ## repl specific 
+  - r-httpuv
+  - r-jsonlite
