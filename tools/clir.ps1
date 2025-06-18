@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$configDir = Join-Path $HOME '.rjson'
+$configDir = Join-Path $HOME '.replr'
 $instFile  = Join-Path $configDir 'instances'
 $defaultPort = 8080
 
@@ -35,7 +35,7 @@ switch ($cmd) {
     'start' {
         $label = if ($args.Length -gt 1) { $args[1] } else { 'default' }
         $port  = if ($args.Length -gt 2) { [int]$args[2] } else { $defaultPort }
-        $proc = Start-Process -PassThru Rscript -ArgumentList 'r_json_server.R','--background','--port',$port
+        $proc = Start-Process -PassThru Rscript -ArgumentList 'replr_server.R','--background','--port',$port
         $inst[$label] = @{ port = $port; pid = $proc.Id }
         Save-Instances $inst
         Write-Output "Started '$label' on port $port (PID $($proc.Id))"
@@ -69,6 +69,6 @@ switch ($cmd) {
         Get-Content $instFile
     }
     default {
-        Write-Output "Usage: rcli.ps1 {start [label] [port]|stop [label]|status [label]|exec [label] -e CODE|exec [label] < script.R|list}"
+        Write-Output "Usage: clir.ps1 {start [label] [port]|stop [label]|status [label]|exec [label] -e CODE|exec [label] < script.R|list}"
     }
 }

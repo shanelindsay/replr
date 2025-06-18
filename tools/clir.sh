@@ -2,7 +2,7 @@
 #
 # Very small CLI for the R JSON server described earlier.
 
-CONFIG_DIR="${HOME}/.rjson"
+CONFIG_DIR="${HOME}/.replr"
 INST_FILE="${CONFIG_DIR}/instances"
 DEFAULT_PORT=8080
 
@@ -26,7 +26,7 @@ case "$1" in
   start)
     label=${2:-default}
     port=${3:-$DEFAULT_PORT}
-    Rscript r_json_server.R --background --port "$port" &
+    Rscript replr_server.R --background --port "$port" &
     pid=$!
     echo "${label}:${port}:${pid}" >> "${INST_FILE}"
     echo "Started '${label}' on port ${port} (PID ${pid})"
@@ -67,7 +67,7 @@ case "$1" in
 
   *)
     cat <<EOF
-Usage: rcli.sh {start [label] [port]|stop [label]|status [label]|exec [label] -e CODE|exec [label] < script.R|list}
+Usage: clir.sh {start [label] [port]|stop [label]|status [label]|exec [label] -e CODE|exec [label] < script.R|list}
 EOF
     ;;
 esac

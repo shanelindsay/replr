@@ -32,7 +32,7 @@ if (length(args) > 0) {
         stop("Missing port number after --port|-p")
       }
     } else if (args[i] == "--help" || args[i] == "-h") {
-      cat("Usage: Rscript r_json_server.R [options]\n")
+      cat("Usage: Rscript replr_server.R [options]\n")
       cat("Options:\n")
       cat("  --background, -b     Run in background mode\n")
       cat("  --command, -c CMD    Execute a single command and exit\n")

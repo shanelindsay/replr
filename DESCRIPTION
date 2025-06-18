@@ -1,4 +1,4 @@
-Package: rjsonsrv
+Package: replr
 Title: Local HTTP/JSON REPL for R
 Version: 0.0.1
 Authors@R: person("Your Name", "aut", email = "your@email.com")

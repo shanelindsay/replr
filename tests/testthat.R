@@ -1,4 +1,4 @@
 library(testthat)
-library(rjsonsrv)
+library(replr)
 
-test_check("rjsonsrv")
+test_check("replr")
