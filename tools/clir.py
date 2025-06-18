@@ -6,6 +6,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from typing import Dict, Tuple
 
 import requests
@@ -34,7 +35,12 @@ def save_instances(instances: Dict[str, Tuple[int, int]]) -> None:
 
 def port_of(label: str, instances: Dict[str, Tuple[int, int]]) -> int:
     """Return the port associated with *label* or treat *label* as a port."""
-    return instances[label][0] if label in instances else int(label)
+    if label in instances:
+        return instances[label][0]
+    try:
+        return int(label)
+    except ValueError:
+        return DEFAULT_PORT
 
 
 def start(label: str, port: int) -> None:
@@ -78,10 +84,19 @@ def exec_code(label: str, code: str | None) -> None:
         if not code.strip():
             print("Nothing to run; supply code with -e or pipe via stdin", file=sys.stderr)
             sys.exit(1)
-    r = requests.post(
-        f"http://127.0.0.1:{port}/execute",
-        json={"command": code},
-    )
+    def send() -> requests.Response:
+        return requests.post(
+            f"http://127.0.0.1:{port}/execute",
+            json={"command": code},
+        )
+
+    try:
+        r = send()
+    except requests.exceptions.ConnectionError:
+        print(f"Initializing server for '{label}' on port {port}...", file=sys.stderr)
+        start(label, port)
+        time.sleep(1)
+        r = send()
     print(json.dumps(r.json(), indent=2))
 
 
