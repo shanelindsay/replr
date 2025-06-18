@@ -1,0 +1,74 @@
+---
+title: "CLI Tools for rjsonsrv"
+author: "Package Maintainer"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CLI Tools for rjsonsrv}
+  %\VignetteEngine{rmarkdown::html_vignette}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+# Overview
+
+The package includes a Bash script, `rcli.sh`, for managing a JSON server from the command line. This vignette demonstrates common tasks such as starting the server, running code and stopping it.
+
+## Starting a server
+
+Run the script from the package root to launch the server on a custom port. The instance is labelled so that subsequent commands know which port to use.
+
+```bash
+$ tools/rcli.sh start demo 8123
+Started 'demo' on port 8123 (PID 12345)
+```
+
+## Executing code
+
+Pipe an expression to `exec` to evaluate it remotely. The output is returned as JSON.
+
+```bash
+$ echo 'sqrt(144)' | tools/rcli.sh exec demo
+{
+  "status": "success",
+  "output": "",
+  "error": "",
+  "plots": "",
+  "result_summary": {"type": "double"}
+}
+```
+
+## Checking status
+
+Use the `status` subcommand to verify the server is running.
+
+```bash
+$ tools/rcli.sh status demo
+{
+  "status": "running",
+  "pid": 12345,
+  "port": 8123
+}
+```
+
+## Stopping the server
+
+When finished, shut down the labelled instance.
+
+```bash
+$ tools/rcli.sh stop demo
+Sent shutdown to 'demo' (port 8123)
+```
+
+## Listing instances
+
+All active instances are tracked in `~/.rjson/instances`.
+
+```bash
+$ tools/rcli.sh list
+demo:8123:12345
+```
+
+The Bash client provides a lightweight interface for integrating `rjsonsrv` in shell scripts and other command line workflows.
