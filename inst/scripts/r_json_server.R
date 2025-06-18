@@ -150,7 +150,7 @@ process_request <- function(req) {
       headers = list('Content-Type' = 'application/json'),
       body = toJSON(list(
         status = "running",
-        uptime = difftime(Sys.time(), server_state$start_time, units = "secs"),
+        uptime = as.numeric(difftime(Sys.time(), server_state$start_time, units = "secs")),
         pid = Sys.getpid(),
         r_version = R.version.string
       ), auto_unbox = TRUE)
@@ -162,7 +162,7 @@ process_request <- function(req) {
       headers = list('Content-Type' = 'application/json'),
       body = toJSON(list(
         status = "running",
-        uptime = difftime(Sys.time(), server_state$start_time, units = "secs"),
+        uptime = as.numeric(difftime(Sys.time(), server_state$start_time, units = "secs")),
         last_call_time = format(server_state$last_call_time, "%Y-%m-%d %H:%M:%S"),
         command_count = server_state$command_count,
         variables = vars,
@@ -230,7 +230,7 @@ process_request <- function(req) {
           }
           else {
             result$result_summary <- list(
-              type = class(result$result)[1]
+              type = typeof(result$result)
             )
           }
         }
@@ -300,16 +300,18 @@ if (run_mode == "interactive" || run_mode == "background") {
   }
   if (run_mode == "interactive") {
     cat("Server is running. Press Ctrl+C to stop.\n")
-    while (TRUE) {
-      Sys.sleep(1)
-      if (difftime(Sys.time(), last_call_time, units = "secs") >= 10) {
-        write(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), heartbeat_file)
-        last_call_time <- Sys.time()
-      }
-    }
   } else {
     cat("Server is running in background mode.\n")
     cat("To stop the server, send a request to /shutdown or kill process", Sys.getpid(), "\n")
+  }
+  while (TRUE) {
+    httpuv::service()
+    Sys.sleep(0.001)
+    if (difftime(Sys.time(), last_call_time, units = "secs") >= 10) {
+      write(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), heartbeat_file)
+      last_call_time <- Sys.time()
+    }
+  }
   }
 } else if (run_mode == "command") {
   cat("Executing command:", command_to_run, "\n")
