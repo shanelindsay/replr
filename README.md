@@ -14,7 +14,8 @@
    ```
 3. Install the package from GitHub:
    ```R
-   devtools::install_github("yourusername/replr")
+
+   devtools::install_github("shanelindsay/replr")
    ```
 
 ## Basic usage
