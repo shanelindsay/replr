@@ -140,9 +140,24 @@ capture_output <- function(expr) {
   )
 }
 
+parse_query_string <- function(x) {
+  if (is.null(x) || nchar(x) == 0) return(list())
+  parts <- strsplit(x, "&", fixed = TRUE)[[1]]
+  kv <- strsplit(parts, "=", fixed = TRUE)
+  out <- setNames(lapply(kv, function(p) if (length(p) > 1) utils::URLdecode(p[2]) else ""), sapply(kv, `[`, 1))
+  out
+}
+
 process_request <- function(req) {
   server_state$last_call_time <- Sys.time()
   write(format(server_state$last_call_time, "%Y-%m-%d %H:%M:%S"), heartbeat_file)
+
+  qs <- parse_query_string(req$QUERY_STRING)
+  plain_text <- isTRUE(as.logical(qs$plain)) || identical(qs$format, "text")
+  summary_enabled <- if (!is.null(qs$summary)) as.logical(qs$summary) else TRUE
+  include_output <- if (!is.null(qs$output)) as.logical(qs$output) else getOption("rjson.output", TRUE)
+  include_warnings <- if (!is.null(qs$warnings)) as.logical(qs$warnings) else getOption("rjson.warnings", TRUE)
+  include_error <- if (!is.null(qs$error)) as.logical(qs$error) else getOption("rjson.error", TRUE)
 
   if (req$PATH_INFO == "/status") {
     list(
@@ -195,7 +210,7 @@ process_request <- function(req) {
         server_state$command_count <- server_state$command_count + 1
         cat("Executing: ", cmd, "\n")
         result <- capture_output(cmd)
-        if (!is.null(result$result)) {
+        if (!is.null(result$result) && summary_enabled) {
           if (is.data.frame(result$result)) {
             result$result_summary <- list(
               type = "data.frame",
@@ -235,23 +250,34 @@ process_request <- function(req) {
           }
         }
         server_state$last_result <- result
-        response <- list(
-          status = "success",
-          output = result$output,
-          error = result$error,
-          warning = result$warning,
-          plots = result$plots,
-          result_summary = result$result_summary
-        )
+        response <- list(status = "success")
+        if (include_output) response$output <- result$output
+        if (include_error) response$error <- result$error
+        if (include_warnings) response$warning <- result$warning
+        response$plots <- result$plots
+        if (summary_enabled) response$result_summary <- result$result_summary
         if (nchar(result$error) > 0) {
           server_state$last_error <- result$error
           response$status <- "error"
         }
-        list(
-          status = 200L,
-          headers = list('Content-Type' = 'application/json'),
-          body = toJSON(response, auto_unbox = TRUE, null = "null")
-        )
+        if (plain_text) {
+          text_body <- character()
+          if (include_output && nchar(result$output) > 0) text_body <- c(text_body, result$output)
+          if (include_warnings && length(result$warning) > 0) text_body <- c(text_body, paste("Warnings:", paste(result$warning, collapse = "\n")))
+          if (include_error && nchar(result$error) > 0) text_body <- c(text_body, paste("Error:", result$error))
+          if (summary_enabled && !is.null(result$result_summary)) text_body <- c(text_body, paste(capture.output(str(result$result_summary)), collapse = "\n"))
+          list(
+            status = 200L,
+            headers = list('Content-Type' = 'text/plain'),
+            body = paste(text_body, collapse = "\n")
+          )
+        } else {
+          list(
+            status = 200L,
+            headers = list('Content-Type' = 'application/json'),
+            body = toJSON(response, auto_unbox = TRUE, null = "null")
+          )
+        }
       } else {
         list(
           status = 400L,
