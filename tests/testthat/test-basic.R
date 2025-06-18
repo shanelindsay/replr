@@ -26,10 +26,34 @@ test_that("warnings can be suppressed", {
 })
 
 test_that("no plots are returned when code produces none", {
-  skip_on_cran()
-  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8126, "--background"))
+  ps <- processx::process$new(
+    "Rscript",
+    c(
+      system.file("scripts", "replr_server.R", package = "replr"),
+      "--port", "8126",
+      "--background"
+    )
+  )
   on.exit(ps$kill())
   Sys.sleep(1)
-  res <- replr::exec_code("1+1", port=8126)
+
+  res <- replr::exec_code("1+1", port = 8126)
   expect_length(res$plots, 0)
+})
+
+test_that("errors are captured correctly", {
+  ps <- processx::process$new(
+    "Rscript",
+    c(
+      system.file("scripts", "replr_server.R", package = "replr"),
+      "--port", "8126",
+      "--background"
+    )
+  )
+  on.exit(ps$kill())
+  Sys.sleep(1)
+
+  res <- replr::exec_code("log('foo')", port = 8126)
+  expect_equal(res$output, "")
+  expect_match(res$error, "non-numeric")
 })

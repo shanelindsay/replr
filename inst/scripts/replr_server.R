@@ -101,31 +101,41 @@ capture_output <- function(expr) {
 
   pdf(NULL)
   dev.control(displaylist = "enable")
+Here’s the full conflict-free version, combining both branches’ checks into one clean block:
 
-  withCallingHandlers(
-    tryCatch({
-      temp_result <- eval(parse(text = expr), envir = .GlobalEnv)
-      if (dev.cur() > 1) {
-        rec <- recordPlot()
-        if (length(rec[[1]]) > 0) {
-          plot_file <- file.path(img_dir, paste0("plot_", format(Sys.time(), "%Y%m%d_%H%M%S_"), plot_index, ".png"))
-          png(file = plot_file, width = 800, height = 600)
-          replayPlot(rec)
-          dev.off()
-          plot_files <- c(plot_files, plot_file)
-          plot_index <- plot_index + 1
-        }
-      }
-    }, error = function(e) {
-      sink(error_conn, type = "message")
-      cat("Error: ", conditionMessage(e), "\n")
-      sink(NULL, type = "message")
-    }),
-    warning = function(w) {
-      temp_warning <- c(temp_warning, conditionMessage(w))
-      invokeRestart("muffleWarning")
+withCallingHandlers(
+  tryCatch({
+    temp_result <- eval(parse(text = expr), envir = .GlobalEnv)
+    
+    # Capture and save any plot that was drawn
+    rec_plot <- recordPlot()
+    if (dev.cur() > 1 &&
+        inherits(rec_plot, "recordedplot") &&
+        length(rec_plot[[1]]) > 0) {
+      
+      plot_file <- file.path(
+        img_dir,
+        paste0("plot_", format(Sys.time(), "%Y%m%d_%H%M%S_"), plot_index, ".png")
+      )
+      png(file = plot_file, width = 800, height = 600)
+      replayPlot(rec_plot)
+      dev.off()
+      
+      plot_files <- c(plot_files, plot_file)
+      plot_index <- plot_index + 1
     }
-  )
+    
+  }, error = function(e) {
+    sink(error_conn, type = "message")
+    message("Error: ", conditionMessage(e))
+    sink(NULL, type = "message")
+  }),
+  
+  warning = function(w) {
+    temp_warning <- c(temp_warning, conditionMessage(w))
+    invokeRestart("muffleWarning")
+  }
+)
 
   sink(NULL)
   close(output_conn)
