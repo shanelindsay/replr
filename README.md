@@ -14,7 +14,7 @@
    ```
 3. Install the package from GitHub:
    ```R
-   devtools::install_github("yourusername/rjsonsrv")
+   devtools::install_github("shanelindsay/replr")
    ```
 
 ## Basic usage
