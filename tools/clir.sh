@@ -18,18 +18,30 @@ port_of() {
   if [[ -n $line ]]; then
     cut -d':' -f2 <<<"$line"
   else
-    echo "$label"
+    if [[ $label =~ ^[0-9]+$ ]]; then
+      echo "$label"
+    else
+      echo "$DEFAULT_PORT"
+    fi
   fi
+}
+
+start_instance() {
+  local label=$1
+  local port=$2
+  local script_dir="$(cd "$(dirname "$0")" && pwd)"
+  local script="$script_dir/../inst/scripts/replr_server.R"
+  Rscript "$script" --background --port "$port" >/dev/null 2>&1 &
+  local pid=$!
+  echo "${label}:${port}:${pid}" >> "${INST_FILE}"
+  echo "Started '${label}' on port ${port} (PID ${pid})"
 }
 
 case "$1" in
   start)
     label=${2:-default}
     port=${3:-$DEFAULT_PORT}
-    Rscript replr_server.R --background --port "$port" &
-    pid=$!
-    echo "${label}:${port}:${pid}" >> "${INST_FILE}"
-    echo "Started '${label}' on port ${port} (PID ${pid})"
+    start_instance "$label" "$port"
     ;;
 
   stop)
@@ -56,6 +68,11 @@ case "$1" in
     fi
     while [[ $# -gt 2 ]]; do shift; [[ $1 == -e ]] && { code="$2"; shift; } done
     [[ -z $code ]] && code=$(cat)       # read piped input
+    if ! curl -s "http://127.0.0.1:${port}/status" >/dev/null; then
+      echo "Initializing server for '${label}' on port ${port}..." >&2
+      start_instance "$label" "$port"
+      sleep 1
+    fi
     curl -s -X POST -H "Content-Type: application/json" \
          -d "{\"command\":$(jq -Rs . <<<"$code")}" \
          "http://127.0.0.1:${port}/execute" | jq
