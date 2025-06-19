@@ -1,12 +1,12 @@
 #' Execute code on the replr server
 #'
-#' Sends R expressions to a running `replr` server and returns the parsed JSON
-#' response. Use `full_results = TRUE` to include the complete result object in
-#' the response.
+#' Sends R expressions to a running `replr` server and returns console text by
+#' default. Set `plain = FALSE` to request a JSON response. Use
+#' `full_results = TRUE` to include the complete result object in the response.
 #'
 #' @param code Character string of R code to evaluate.
 #' @param port Server port number.
-#' @param plain Return plain text instead of JSON.
+#' @param plain Logical; return plain text (default) or JSON when `FALSE`.
 #' @param summary Include a summary of the result object.
 #' @param output,warnings,error Include captured output, warnings and errors.
 #' @param full_results Logical; if `TRUE`, bypass summarization and include the
@@ -14,11 +14,15 @@
 #'   data.
 #' @return A list representing the JSON response from the server.
 #' @export
-exec_code <- function(code, port = 8080, plain = FALSE, summary = TRUE,
+exec_code <- function(code, port = 8080, plain = TRUE, summary = TRUE,
                       output = TRUE, warnings = TRUE, error = TRUE,
                       full_results = FALSE) {
   query <- list()
-  if (plain) query$format <- "text"
+  if (plain) {
+    query$format <- "text"
+  } else {
+    query$plain <- "false"
+  }
   if (!summary || full_results) query$summary <- "false"
   if (!output) query$output <- "false"
   if (!warnings) query$warnings <- "false"

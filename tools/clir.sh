@@ -91,6 +91,7 @@ case "$1" in
     curl -s -X POST -H "Content-Type: application/json" \
          -d "{\"command\":$(jq -Rs . <<<"$code")}" \
          "$url"
+
     ;;
 
   list)

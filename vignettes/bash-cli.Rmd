@@ -14,7 +14,10 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 
 # Overview
 
-The package includes a Bash script, `clir.sh`, for managing a JSON server from the command line. JSON parsing utilities like `jq` are no longer required; by default results are returned as plain text. Use `--json` when structured output is desired. This vignette demonstrates common tasks such as starting the server, running code and stopping it.
+The package includes a Bash script, `clir.sh`, for managing a server from the
+command line. Output is plain text by default. Use the `--json` flag to request
+structured JSON (requires `jq` for pretty printing). This vignette demonstrates
+common tasks such as starting the server, running code and stopping it.
 
 ## Starting a server
 
@@ -27,13 +30,14 @@ Started 'demo' on port 8123 (PID 12345)
 
 ## Executing code
 
-Pipe an expression to `exec` to evaluate it remotely. The result is printed as plain text by default.
+Pipe an expression to `exec` to evaluate it remotely. Output is plain text by default; add `--json` for structured JSON.
 
 ```bash
 $ echo 'sqrt(144)' | tools/clir.sh exec demo
 12
 
 # structured output
+
 $ echo 'sqrt(144)' | tools/clir.sh exec demo --json
 {
   "status": "success",

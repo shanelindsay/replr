@@ -8,6 +8,9 @@ args <- commandArgs(trailingOnly = TRUE)
 run_mode <- "interactive"  # Default mode
 command_to_run <- NULL
 port <- 8080  # Default port
+if (is.null(getOption("replr.preview_rows"))) {
+  options(replr.preview_rows = 5)
+}
 
 # Process command line arguments
 if (length(args) > 0) {
@@ -158,7 +161,11 @@ process_request <- function(req) {
   write(format(server_state$last_call_time, "%Y-%m-%d %H:%M:%S"), heartbeat_file)
 
   qs <- parse_query_string(req$QUERY_STRING)
-  plain_text <- isTRUE(as.logical(qs$plain)) || identical(qs$format, "text")
+  plain_text <- if (is.null(qs$plain) && is.null(qs$format)) {
+    TRUE
+  } else {
+    isTRUE(as.logical(qs$plain)) || identical(qs$format, "text")
+  }
   full_results <- if (!is.null(qs$full_results)) as.logical(qs$full_results) else FALSE
   summary_enabled <- if (!is.null(qs$summary)) {
     as.logical(qs$summary)
@@ -228,7 +235,7 @@ process_request <- function(req) {
               type = "data.frame",
               dim = dim(result$result),
               columns = names(result$result),
-              preview = head(result$result, 10)
+              preview = head(result$result, getOption("replr.preview_rows", 5))
             )
           }
           else if (inherits(result$result, "lm") || inherits(result$result, "glm")) {
@@ -259,7 +266,7 @@ process_request <- function(req) {
             result$result_summary <- list(
               type = typeof(result$result),
               length = length(result$result),
-              preview = head(result$result, 10)
+              preview = head(result$result, getOption("replr.preview_rows", 5))
             )
           }
           else {
