@@ -33,9 +33,16 @@ start_server(port = 8080, background = TRUE)
 
 # returns console text
 exec_code("1 + 1", port = 8080)
+## [1] 2
 
 # request JSON instead
 exec_code("1 + 1", port = 8080, plain = FALSE)
+## {
+##   "output": "[1] 2",
+##   "error": "",
+##   "plots": "",
+##   "result_summary": {"type": "double"}
+## }
 ```
 
 Use `server_status()` to confirm the server is running, and `stop_server()` to shut it down.
@@ -103,9 +110,11 @@ option. Quote the expression so it is passed as one argument:
 
 ```bash
 replr --command "1 + 1"           # plain text output
+#> [1] 2
 
 # request JSON
 replr --command "1 + 1" --json
+#> {"output":"[1] 2","error":"","plots":"","result_summary":{"type":"double"}}
 ```
 
 ### Global options
