@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Simple cross-platform CLI for replr_server."""
+"""Simple cross-platform CLI for ``replr_server``.
+
+When ``exec`` is invoked with ``--json`` the server returns
+a JSON object containing the fields ``output``, ``warning``,
+``error``, ``plots``, ``result_summary`` and ``result``.
+"""
 
 import argparse
 import json
