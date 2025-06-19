@@ -28,16 +28,16 @@ library(replr)
 start_server(port = 8080, background = TRUE)
 
 exec_code("1 + 1", port = 8080)
+#> [1] 2
 ```
 
 Use `server_status()` to confirm the server is running, and `stop_server()` to shut it down.
 
 ### Returning full results
 
-`exec_code()` normally returns a summary of the evaluated object. Set
-`full_results = TRUE` to include the entire object in the JSON response.
-Be mindful that this may expose sensitive data or generate very large
-responses.
+`exec_code()` returns plain text by default. Set `plain = FALSE` to obtain a
+parsed JSON response. Use `summary = TRUE` or `full_results = TRUE` to request
+additional detail from the server.
 
 ## Running tests
 

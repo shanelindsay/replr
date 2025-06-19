@@ -10,11 +10,11 @@ The package exposes a few core functions:
 
 - `start_server(port = 8080, background = FALSE)` — launches the JSON server. If
   `background = TRUE` the call returns immediately with the server running in
-the background.
+  the background.
 - `stop_server(port = 8080)` — sends a shutdown request to the server.
-- `exec_code(code, port = 8080, plain = FALSE, summary = TRUE, output = TRUE,
+- `exec_code(code, port = 8080, plain = TRUE, summary = FALSE, output = TRUE,
   warnings = TRUE, error = TRUE)` — submit R code to the running server and
-  return the parsed JSON response. Setting `plain = TRUE` returns plain text.
+  return plain text. Set `plain = FALSE` for parsed JSON output.
 - `server_status(port = 8080)` — retrieve basic information such as uptime and
   process id.
 
