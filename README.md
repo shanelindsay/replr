@@ -1,6 +1,9 @@
 # replr
 
-**replr** provides a simple HTTP server for evaluating R code and returning structured JSON results. It is designed for small automation tasks or remote evaluation from other languages.
+**replr** provides a simple HTTP server for evaluating R code. By default it
+returns the console output from the expression. Set `plain = FALSE` or pass
+`--json` on the CLI to receive structured JSON instead. This is useful for
+small automation tasks or remote evaluation from other languages.
 
 ## Installation with micromamba
 
@@ -27,7 +30,11 @@ library(replr)
 
 start_server(port = 8080, background = TRUE)
 
+# returns console text
 exec_code("1 + 1", port = 8080)
+
+# request JSON instead
+exec_code("1 + 1", port = 8080, plain = FALSE)
 ```
 
 Use `server_status()` to confirm the server is running, and `stop_server()` to shut it down.
@@ -74,7 +81,10 @@ Evaluate a single expression directly from the shell using the `--command`
 option. Quote the expression so it is passed as one argument:
 
 ```bash
-replr --command "1 + 1"
+replr --command "1 + 1"           # plain text output
+
+# request JSON
+replr --command "1 + 1" --json
 ```
 
 ### Global options

@@ -161,7 +161,11 @@ process_request <- function(req) {
   write(format(server_state$last_call_time, "%Y-%m-%d %H:%M:%S"), heartbeat_file)
 
   qs <- parse_query_string(req$QUERY_STRING)
-  plain_text <- isTRUE(as.logical(qs$plain)) || identical(qs$format, "text")
+  plain_text <- if (is.null(qs$plain) && is.null(qs$format)) {
+    TRUE
+  } else {
+    isTRUE(as.logical(qs$plain)) || identical(qs$format, "text")
+  }
   full_results <- if (!is.null(qs$full_results)) as.logical(qs$full_results) else FALSE
   summary_enabled <- if (!is.null(qs$summary)) {
     as.logical(qs$summary)
