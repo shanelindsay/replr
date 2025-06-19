@@ -91,6 +91,8 @@ def exec_code(label: str, code: str | None, json_out: bool = False) -> None:
         url = f"http://127.0.0.1:{port}/execute"
         if not json_out:
             url += "?format=text"
+        else:
+            url += "?plain=false"
         return requests.post(url, json={"command": code})
 
     try:
