@@ -5,6 +5,7 @@ test_that("round-trip code returns expected result", {
   Sys.sleep(1)
   res <- replr::exec_code("1+1", port=8123, plain = FALSE, summary = TRUE)
   expect_equal(res$result_summary$type, "double")
+  expect_match(res$output, "\\[1\\] 2")
 })
 
 test_that("plain text mode works", {
