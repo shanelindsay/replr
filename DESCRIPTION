@@ -1,7 +1,7 @@
 Package: replr
 Title: Local HTTP/JSON REPL for R
 Version: 0.0.1
-Authors@R: person("Your Name", "aut", email = "your@email.com")
+Authors@R: person("Shane Lindsay", "aut", email = "shane.lindsay@email.com")
 Description: Launches a local httpuv-based REPL server for evaluating R code and returning results as structured JSON, with Bash/Python/PowerShell clients.
 License: MIT
 Encoding: UTF-8
