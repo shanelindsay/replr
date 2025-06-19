@@ -18,6 +18,12 @@ the background.
 - `server_status(port = 8080)` — retrieve basic information such as uptime and
   process id.
 
+### Global options
+
+The preview length for summaries is controlled by `replr.preview_rows`.
+It defaults to `5`. Set `options(replr.preview_rows = n)` before sending
+commands to adjust how many rows are shown in previews.
+
 ## Bash command line (tools/clir.sh)
 
 The `tools` directory contains small clients for shells. The Bash script

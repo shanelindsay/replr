@@ -57,3 +57,10 @@ option. Quote the expression so it is passed as one argument:
 replr --command "1 + 1"
 ```
 
+### Global options
+
+`replr` uses a few R options for customization. The number of rows shown in
+data frame summaries is controlled by `replr.preview_rows` which defaults to `5`.
+Set this option before starting the server (or via `exec_code()` once running)
+to change how many rows are returned in previews.
+
