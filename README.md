@@ -32,6 +32,27 @@ exec_code("1 + 1", port = 8080)
 
 Use `server_status()` to confirm the server is running, and `stop_server()` to shut it down.
 
+## Starting and stopping the server
+
+Launch a background server on a custom port:
+
+```R
+start_server(port = 8080, background = TRUE)
+```
+
+Stop that server instance when finished:
+
+```R
+stop_server(port = 8080)
+```
+
+The same operations can be performed from the command line:
+
+```bash
+tools/clir.sh start default 8080
+tools/clir.sh stop 8080
+```
+
 ## Running tests
 
 After activating the `myr` environment, run the unit tests with:
