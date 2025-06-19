@@ -36,6 +36,8 @@ Pipe an expression to `exec` to evaluate it remotely. Output is plain text by de
 $ echo 'sqrt(144)' | tools/clir.sh exec demo
 12
 
+# structured output
+
 $ echo 'sqrt(144)' | tools/clir.sh exec demo --json
 {
   "status": "success",
@@ -50,6 +52,8 @@ For quick commands you can supply the code directly using `-e`:
 
 ```bash
 $ tools/clir.sh exec demo -e '1 + 1'
+
+# JSON output
 $ tools/clir.sh exec demo -e '1 + 1' --json
 ```
 

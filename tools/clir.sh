@@ -55,7 +55,7 @@ case "$1" in
   status)
     label=${2:-default}
     port=$(port_of "$label")
-    curl -s "http://127.0.0.1:${port}/status" | jq
+    curl -s "http://127.0.0.1:${port}/status"
     ;;
 
   exec)
@@ -72,7 +72,7 @@ case "$1" in
       case "$1" in
         -e)
           code="$2"; shift 2;;
-        --json)
+        --json|-j)
           json=1; shift;;
         *)
           shift;;
@@ -85,14 +85,13 @@ case "$1" in
       sleep 1
     fi
     url="http://127.0.0.1:${port}/execute"
-    [[ $json -eq 1 ]] && url="${url}?plain=false"
-    if [[ $json -eq 1 ]]; then
-      curl -s -X POST -H "Content-Type: application/json" \
-           -d "{\"command\":$(jq -Rs . <<<"$code")}" "$url" | jq
-    else
-      curl -s -X POST -H "Content-Type: application/json" \
-           -d "{\"command\":$(jq -Rs . <<<"$code")}" "$url"
+    if [[ $json -eq 0 ]]; then
+      url="${url}?format=text"
     fi
+    curl -s -X POST -H "Content-Type: application/json" \
+         -d "{\"command\":$(jq -Rs . <<<"$code")}" \
+         "$url"
+
     ;;
 
   list)

@@ -69,14 +69,17 @@ def stop(label: str) -> None:
     print(f"Sent shutdown to '{label}' (port {port})")
 
 
-def status(label: str) -> None:
+def status(label: str, json_out: bool = False) -> None:
     inst = load_instances()
     port = port_of(label, inst)
     r = requests.get(f"http://127.0.0.1:{port}/status")
-    print(json.dumps(r.json(), indent=2))
+    if json_out:
+        print(json.dumps(r.json(), indent=2))
+    else:
+        print(r.text)
 
 
-def exec_code(label: str, code: str | None, json_out: bool) -> None:
+def exec_code(label: str, code: str | None, json_out: bool = False) -> None:
     inst = load_instances()
     port = port_of(label, inst)
     if not code:
@@ -86,12 +89,9 @@ def exec_code(label: str, code: str | None, json_out: bool) -> None:
             sys.exit(1)
     def send() -> requests.Response:
         url = f"http://127.0.0.1:{port}/execute"
-        if json_out:
-            url += "?plain=false"
-        return requests.post(
-            url,
-            json={"command": code},
-        )
+        if not json_out:
+            url += "?format=text"
+        return requests.post(url, json={"command": code})
 
     try:
         r = send()
@@ -125,6 +125,7 @@ def main() -> None:
 
     status_p = sub.add_parser("status")
     status_p.add_argument("label", nargs="?", default="default")
+    status_p.add_argument("--json", action="store_true")
 
     exec_p = sub.add_parser("exec")
     exec_p.add_argument("label", nargs="?", default="default")
@@ -140,7 +141,7 @@ def main() -> None:
     elif args.cmd == "stop":
         stop(args.label)
     elif args.cmd == "status":
-        status(args.label)
+        status(args.label, args.json)
     elif args.cmd == "exec":
         exec_code(args.label, args.code, args.json)
     elif args.cmd == "list":
