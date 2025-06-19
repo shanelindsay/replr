@@ -69,14 +69,17 @@ def stop(label: str) -> None:
     print(f"Sent shutdown to '{label}' (port {port})")
 
 
-def status(label: str) -> None:
+def status(label: str, json_out: bool = False) -> None:
     inst = load_instances()
     port = port_of(label, inst)
     r = requests.get(f"http://127.0.0.1:{port}/status")
-    print(json.dumps(r.json(), indent=2))
+    if json_out:
+        print(json.dumps(r.json(), indent=2))
+    else:
+        print(r.text)
 
 
-def exec_code(label: str, code: str | None) -> None:
+def exec_code(label: str, code: str | None, json_out: bool = False) -> None:
     inst = load_instances()
     port = port_of(label, inst)
     if not code:
@@ -85,10 +88,10 @@ def exec_code(label: str, code: str | None) -> None:
             print("Nothing to run; supply code with -e or pipe via stdin", file=sys.stderr)
             sys.exit(1)
     def send() -> requests.Response:
-        return requests.post(
-            f"http://127.0.0.1:{port}/execute",
-            json={"command": code},
-        )
+        url = f"http://127.0.0.1:{port}/execute"
+        if not json_out:
+            url += "?format=text"
+        return requests.post(url, json={"command": code})
 
     try:
         r = send()
@@ -97,7 +100,10 @@ def exec_code(label: str, code: str | None) -> None:
         start(label, port)
         time.sleep(1)
         r = send()
-    print(json.dumps(r.json(), indent=2))
+    if json_out:
+        print(json.dumps(r.json(), indent=2))
+    else:
+        print(r.text)
 
 
 def list_instances() -> None:
@@ -119,10 +125,12 @@ def main() -> None:
 
     status_p = sub.add_parser("status")
     status_p.add_argument("label", nargs="?", default="default")
+    status_p.add_argument("--json", action="store_true")
 
     exec_p = sub.add_parser("exec")
     exec_p.add_argument("label", nargs="?", default="default")
     exec_p.add_argument("-e", dest="code")
+    exec_p.add_argument("--json", action="store_true")
 
     sub.add_parser("list")
 
@@ -133,9 +141,9 @@ def main() -> None:
     elif args.cmd == "stop":
         stop(args.label)
     elif args.cmd == "status":
-        status(args.label)
+        status(args.label, args.json)
     elif args.cmd == "exec":
-        exec_code(args.label, args.code)
+        exec_code(args.label, args.code, args.json)
     elif args.cmd == "list":
         list_instances()
     else:

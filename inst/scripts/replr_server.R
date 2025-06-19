@@ -8,6 +8,9 @@ args <- commandArgs(trailingOnly = TRUE)
 run_mode <- "interactive"  # Default mode
 command_to_run <- NULL
 port <- 8080  # Default port
+if (is.null(getOption("replr.preview_rows"))) {
+  options(replr.preview_rows = 5)
+}
 
 # Process command line arguments
 if (length(args) > 0) {
@@ -228,7 +231,7 @@ process_request <- function(req) {
               type = "data.frame",
               dim = dim(result$result),
               columns = names(result$result),
-              preview = head(result$result, 10)
+              preview = head(result$result, getOption("replr.preview_rows", 5))
             )
           }
           else if (inherits(result$result, "lm") || inherits(result$result, "glm")) {
@@ -259,7 +262,7 @@ process_request <- function(req) {
             result$result_summary <- list(
               type = typeof(result$result),
               length = length(result$result),
-              preview = head(result$result, 10)
+              preview = head(result$result, getOption("replr.preview_rows", 5))
             )
           }
           else {

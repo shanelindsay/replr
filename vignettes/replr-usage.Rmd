@@ -14,9 +14,10 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 # Introduction
 
-`replr` provides a lightweight HTTP server that executes R code and returns
-structured JSON responses. This vignette demonstrates the core features for
-interacting with the server from R.
+`replr` provides a lightweight HTTP server that executes R code. By default the
+server returns the console text produced by the expression. Set `plain = FALSE`
+to receive structured JSON instead. This vignette demonstrates the core
+features for interacting with the server from R.
 
 # Starting and Stopping the Server
 
@@ -42,42 +43,42 @@ replr::stop_server(port = 8123)
 
 # Executing Code
 
-`exec_code()` sends R expressions to the server for evaluation. The response is
-a list that can include standard output, warnings, errors, plot paths and a
-summary of the result.
+`exec_code()` sends R expressions to the server for evaluation. By default the
+result is returned as plain text.
 
 ```{r exec-code, eval=FALSE}
 res <- replr::exec_code("1 + 1", port = 8123)
 res
-## $status
-## [1] "success"
-##
-## $output
-## [1] ""
-##
-## $error
-## [1] ""
-##
-## $plots
-## [1] "r_comm/images/plot_20250618_203333_1.png"
-##
-## $result_summary
-## $result_summary$type
-## [1] "double"
+## [1] 2
 ```
 
 ## Controlling the Output
 
 Several arguments let you tailor the response:
 
-- `plain`: return the result as plain text.
-- `summary`: include a summary of the returned value.
+- `plain`: set to `FALSE` to return parsed JSON.
+- `summary`: include a summary of the returned value when JSON is requested.
 - `output`, `warnings`, `error`: toggle these fields in the response.
 
+To change how many rows of a data frame are shown in the summary preview, set
+the global option `replr.preview_rows`:
+
+```{r preview-option, eval=FALSE}
+options(replr.preview_rows = 10)
+```
+
+Summaries can be disabled entirely:
+
+```{r disable-summary, eval=FALSE}
+replr::exec_code("mean(1:5)", port = 8123, summary = FALSE)
+```
+
 ```{r custom-call, eval=FALSE}
-# return only the calculated value as plain text
-replr::exec_code("sqrt(25)", port = 8123, plain = TRUE)
-## [1] "{\"status\":\"success\",\"output\":\"\",\"error\":\"\",\"plots\":\"r_comm/images/plot_20250618_203333_2.png\",\"result_summary\":{\"type\":\"double\"}}"
+# return only the calculated value as plain text (default)
+replr::exec_code("sqrt(25)", port = 8123)
+
+# JSON output
+replr::exec_code("sqrt(25)", port = 8123, plain = FALSE)
 ```
 
 # Converting to a Tibble
@@ -86,7 +87,7 @@ The response object has an S3 method `as_tibble()` which converts the result to
 an easy-to-work-with tibble.
 
 ```{r as-tibble, eval=FALSE}
-res <- replr::exec_code("summary(lm(mpg ~ cyl, data = mtcars))", port = 8123)
+res <- replr::exec_code("summary(lm(mpg ~ cyl, data = mtcars))", port = 8123, plain = FALSE)
 
 tibble <- as_tibble(res)
 tibble
@@ -105,21 +106,11 @@ library(replr)
 
 start_server(port = 8123, background = TRUE)
 
+# console text
 exec_code("mean(1:5)", port = 8123)
-## $status
-## [1] "success"
-##
-## $output
-## [1] ""
-##
-## $error
-## [1] ""
-##
-## $plots
-## [1] "r_comm/images/plot_20250618_203333_3.png"
-##
-## $result_summary
-## $result_summary$type
+
+# JSON result
+exec_code("mean(1:5)", port = 8123, plain = FALSE)$result_summary$type
 ## [1] "double"
 exec_code("plot(1:10)", port = 8123)
 ## $status
@@ -136,8 +127,8 @@ stop_server(port = 8123)
 
 # Conclusion
 
-`replr` makes it easy to evaluate R code from external clients or scripts and
-receive structured JSON responses. This vignette covered starting the server,
-executing code with different options, and converting results for further
-analysis.
+`replr` makes it easy to evaluate R code from external clients or scripts. By
+default you get the printed console text, but JSON is available when needed.
+This vignette covered starting the server, executing code with different
+options, and converting results for further analysis.
 
