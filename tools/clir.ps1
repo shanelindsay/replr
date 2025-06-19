@@ -70,7 +70,7 @@ switch ($cmd) {
         $port = Port-Of $label $inst
         $body = @{ command = $code } | ConvertTo-Json
         $url = "http://127.0.0.1:$port/execute"
-        if (-not $json) { $url = "$url?format=text" }
+        if (-not $json) { $url = "$url?format=text" } else { $url = "$url?plain=false" }
         $resp = Invoke-RestMethod -Uri $url -Method Post -Body $body -ContentType 'application/json'
         if ($json) { $resp | ConvertTo-Json -Depth 10 } else { $resp }
     }
