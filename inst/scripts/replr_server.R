@@ -230,11 +230,18 @@ process_request <- function(req) {
               coefficients = model_summary$coefficients
             )
           }
+          else if (inherits(result$result, "table")) {
+            result$result_summary <- list(
+              type = "table",
+              dim = dim(result$result),
+              preview = if(all(dim(result$result) <= c(10, 10))) unclass(result$result) else "Table too large to preview"
+            )
+          }
           else if (is.matrix(result$result)) {
             result$result_summary <- list(
               type = "matrix",
               dim = dim(result$result),
-              preview = if(all(dim(result$result) <= c(10, 10))) result$result else "Matrix too large to preview"
+              preview = if(all(dim(result$result) <= c(10, 10))) unclass(result$result) else "Matrix too large to preview"
             )
           }
           else if (is.vector(result$result) && length(result$result) > 100) {
