@@ -31,7 +31,8 @@ start_instance() {
   local port=$2
   local script_dir="$(cd "$(dirname "$0")" && pwd)"
   local script="$script_dir/../inst/scripts/replr_server.R"
-  Rscript "$script" --background --port "$port" >/dev/null 2>&1 &
+  mkdir -p "$label"
+  REPLR_BASE_DIR="$label" Rscript "$script" --background --port "$port" >/dev/null 2>&1 &
   local pid=$!
   echo "${label}:${port}:${pid}" >> "${INST_FILE}"
   echo "Started '${label}' on port ${port} (PID ${pid})" >&2
