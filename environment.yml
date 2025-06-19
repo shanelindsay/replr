@@ -17,3 +17,4 @@ dependencies:
   - r-httpuv
   - r-jsonlite
   - r-httr
+  - r-tibble

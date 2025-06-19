@@ -6,5 +6,5 @@ Description: Launches a local httpuv-based REPL server for evaluating R code and
 License: MIT
 Encoding: UTF-8
 Depends: R (>= 3.5.0)
-Imports: httpuv, jsonlite, utils, httr
+Imports: httpuv, jsonlite, utils, httr, tibble
 Suggests: testthat, processx
