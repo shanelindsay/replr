@@ -8,6 +8,9 @@ args <- commandArgs(trailingOnly = TRUE)
 run_mode <- "interactive"  # Default mode
 command_to_run <- NULL
 port <- 8080  # Default port
+if (is.null(getOption("replr.preview_rows"))) {
+  options(replr.preview_rows = 5)
+}
 
 # Process command line arguments
 if (length(args) > 0) {
@@ -18,12 +21,13 @@ if (length(args) > 0) {
       i <- i + 1
     } else if (args[i] == "--command" || args[i] == "-c") {
       if (i + 1 <= length(args)) {
-        command_to_run <- args[i + 1]
+        command_to_run <- paste(args[(i + 1):length(args)], collapse = " ")
         run_mode <- "command"
-        i <- i + 2
+        break
       } else {
         stop("Missing command after --command|-c")
       }
+      i <- length(args) + 1
     } else if (args[i] == "--port" || args[i] == "-p") {
       if (i + 1 <= length(args)) {
         port <- as.integer(args[i + 1])
@@ -227,7 +231,7 @@ process_request <- function(req) {
               type = "data.frame",
               dim = dim(result$result),
               columns = names(result$result),
-              preview = head(result$result, 10)
+              preview = head(result$result, getOption("replr.preview_rows", 5))
             )
           }
           else if (inherits(result$result, "lm") || inherits(result$result, "glm")) {
@@ -258,7 +262,7 @@ process_request <- function(req) {
             result$result_summary <- list(
               type = typeof(result$result),
               length = length(result$result),
-              preview = head(result$result, 10)
+              preview = head(result$result, getOption("replr.preview_rows", 5))
             )
           }
           else {
@@ -357,7 +361,6 @@ if (run_mode == "interactive" || run_mode == "background") {
       write(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), heartbeat_file)
       last_call_time <- Sys.time()
     }
-  }
   }
 } else if (run_mode == "command") {
   cat("Executing command:", command_to_run, "\n")
