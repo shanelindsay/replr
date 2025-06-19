@@ -18,12 +18,13 @@ if (length(args) > 0) {
       i <- i + 1
     } else if (args[i] == "--command" || args[i] == "-c") {
       if (i + 1 <= length(args)) {
-        command_to_run <- args[i + 1]
+        command_to_run <- paste(args[(i + 1):length(args)], collapse = " ")
         run_mode <- "command"
-        i <- i + 2
+        break
       } else {
         stop("Missing command after --command|-c")
       }
+      i <- length(args) + 1
     } else if (args[i] == "--port" || args[i] == "-p") {
       if (i + 1 <= length(args)) {
         port <- as.integer(args[i + 1])
@@ -349,7 +350,6 @@ if (run_mode == "interactive" || run_mode == "background") {
       write(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), heartbeat_file)
       last_call_time <- Sys.time()
     }
-  }
   }
 } else if (run_mode == "command") {
   cat("Executing command:", command_to_run, "\n")
