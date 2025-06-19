@@ -101,12 +101,14 @@ capture_output <- function(expr) {
 
   pdf(NULL)
   dev.control(displaylist = "enable")
+  base_plot <- recordPlot()
 
   withCallingHandlers(
     tryCatch({
       temp_result <- eval(parse(text = expr), envir = .GlobalEnv)
       rec_plot <- recordPlot()
-      if (dev.cur() > 1 && inherits(rec_plot, "recordedplot")) {
+      if (dev.cur() > 1 && inherits(rec_plot, "recordedplot") &&
+          !identical(rec_plot[[2]], base_plot[[2]])) {
         plot_file <- file.path(img_dir, paste0("plot_", format(Sys.time(), "%Y%m%d_%H%M%S_"), plot_index, ".png"))
         png(file = plot_file, width = 800, height = 600)
         replayPlot(rec_plot)
@@ -143,6 +145,7 @@ capture_output <- function(expr) {
 
 parse_query_string <- function(x) {
   if (is.null(x) || nchar(x) == 0) return(list())
+  x <- sub('^[?]', '', x)
   parts <- strsplit(x, "&", fixed = TRUE)[[1]]
   kv <- strsplit(parts, "=", fixed = TRUE)
   out <- setNames(lapply(kv, function(p) if (length(p) > 1) utils::URLdecode(p[2]) else ""), sapply(kv, `[`, 1))
@@ -266,6 +269,7 @@ process_request <- function(req) {
           if (include_output && nchar(result$output) > 0) text_body <- c(text_body, result$output)
           if (include_warnings && length(result$warning) > 0) text_body <- c(text_body, paste("Warnings:", paste(result$warning, collapse = "\n")))
           if (include_error && nchar(result$error) > 0) text_body <- c(text_body, paste("Error:", result$error))
+          if (!is.null(result$result)) text_body <- c(text_body, paste(capture.output(result$result), collapse = "\n"))
           if (summary_enabled && !is.null(result$result_summary)) text_body <- c(text_body, paste(capture.output(str(result$result_summary)), collapse = "\n"))
           list(
             status = 200L,
