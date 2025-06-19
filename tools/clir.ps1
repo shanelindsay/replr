@@ -49,26 +49,35 @@ switch ($cmd) {
     }
     'status' {
         $label = if ($args.Length -gt 1) { $args[1] } else { 'default' }
+        $json = $false
+        if ($args.Length -gt 2 -and $args[2] -eq '--json') { $json = $true }
         $port = Port-Of $label $inst
-        Invoke-RestMethod -Uri "http://127.0.0.1:$port/status" | ConvertTo-Json -Depth 10
+        $resp = Invoke-RestMethod -Uri "http://127.0.0.1:$port/status"
+        if ($json) { $resp | ConvertTo-Json -Depth 10 } else { $resp }
     }
     'exec' {
         $label = if ($args.Length -gt 1) { $args[1] } else { 'default' }
         $code = $null
+        $json = $false
         $i = 2
         while ($i -lt $args.Count) {
-            if ($args[$i] -eq '-e') { $code = $args[$i+1]; $i += 2 } else { $i++ }
+            if ($args[$i] -eq '-e') { $code = $args[$i+1]; $i += 2 }
+            elseif ($args[$i] -eq '--json') { $json = $true; $i++ }
+            else { $i++ }
         }
         if (-not $code) { $code = [Console]::In.ReadToEnd() }
         if (-not $code) { Write-Error 'Nothing to run; supply code with -e or pipe via stdin'; exit 1 }
         $port = Port-Of $label $inst
         $body = @{ command = $code } | ConvertTo-Json
-        Invoke-RestMethod -Uri "http://127.0.0.1:$port/execute" -Method Post -Body $body -ContentType 'application/json' | ConvertTo-Json -Depth 10
+        $url = "http://127.0.0.1:$port/execute"
+        if (-not $json) { $url = "$url?format=text" }
+        $resp = Invoke-RestMethod -Uri $url -Method Post -Body $body -ContentType 'application/json'
+        if ($json) { $resp | ConvertTo-Json -Depth 10 } else { $resp }
     }
     'list' {
         Get-Content $instFile
     }
     default {
-        Write-Output "Usage: clir.ps1 {start [label] [port]|stop [label]|status [label]|exec [label] -e CODE|exec [label] < script.R|list}"
+        Write-Output "Usage: clir.ps1 {start [label] [port]|stop [label]|status [label] [--json]|exec [label] [-e CODE] [--json]|exec [label] < script.R|list}"
     }
 }

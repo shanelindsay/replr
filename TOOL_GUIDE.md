@@ -27,7 +27,7 @@ The `tools` directory contains small clients for shells. The Bash script
 clir.sh start [label] [port]     # start server and record instance
 clir.sh stop [label]             # stop the labelled instance
 clir.sh status [label]           # query status of instance
-clir.sh exec [label] -e CODE     # execute code (or pipe via stdin)
+clir.sh exec [label] [-e CODE] [--json]  # execute code (or pipe via stdin)
 clir.sh list                     # list known instances
 ```
 
@@ -40,6 +40,8 @@ clir.sh start mysrv 8123
 
 # run a single command
 clir.sh exec mysrv -e '1+1'
+# JSON output
+clir.sh exec mysrv -e '1+1' --json
 
 # check status
 clir.sh status mysrv
@@ -61,7 +63,8 @@ languages.
 
 1. Use `start_server()` in R or `clir.sh start` to launch the JSON server.
 2. Send R code with `exec_code()` or via the command line tools.
-3. Inspect results in JSON form, including captured output, warnings, errors,
+3. Use `--json` with the CLI if you need structured data. Plain text is
+   returned otherwise. JSON includes captured output, warnings, errors,
    and plot paths. Summaries are returned for common result types
    (data frames, model objects, etc.).
 4. Stop the server when done with `stop_server()` or `clir.sh stop`.
