@@ -158,7 +158,14 @@ process_request <- function(req) {
 
   qs <- parse_query_string(req$QUERY_STRING)
   plain_text <- isTRUE(as.logical(qs$plain)) || identical(qs$format, "text")
-  summary_enabled <- if (!is.null(qs$summary)) as.logical(qs$summary) else TRUE
+  full_results <- if (!is.null(qs$full_results)) as.logical(qs$full_results) else FALSE
+  summary_enabled <- if (!is.null(qs$summary)) {
+    as.logical(qs$summary)
+  } else if (full_results) {
+    FALSE
+  } else {
+    TRUE
+  }
   include_output <- if (!is.null(qs$output)) as.logical(qs$output) else getOption("rjson.output", TRUE)
   include_warnings <- if (!is.null(qs$warnings)) as.logical(qs$warnings) else getOption("rjson.warnings", TRUE)
   include_error <- if (!is.null(qs$error)) as.logical(qs$error) else getOption("rjson.error", TRUE)
@@ -266,6 +273,7 @@ process_request <- function(req) {
         if (include_error) response$error <- result$error
         if (include_warnings) response$warning <- result$warning
         response$plots <- result$plots
+        if (full_results) response$result <- result$result
         if (summary_enabled) response$result_summary <- result$result_summary
         if (nchar(result$error) > 0) {
           server_state$last_error <- result$error
