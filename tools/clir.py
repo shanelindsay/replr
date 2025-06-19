@@ -76,7 +76,7 @@ def status(label: str) -> None:
     print(json.dumps(r.json(), indent=2))
 
 
-def exec_code(label: str, code: str | None) -> None:
+def exec_code(label: str, code: str | None, json_out: bool) -> None:
     inst = load_instances()
     port = port_of(label, inst)
     if not code:
@@ -85,8 +85,11 @@ def exec_code(label: str, code: str | None) -> None:
             print("Nothing to run; supply code with -e or pipe via stdin", file=sys.stderr)
             sys.exit(1)
     def send() -> requests.Response:
+        url = f"http://127.0.0.1:{port}/execute"
+        if json_out:
+            url += "?plain=false"
         return requests.post(
-            f"http://127.0.0.1:{port}/execute",
+            url,
             json={"command": code},
         )
 
@@ -97,7 +100,10 @@ def exec_code(label: str, code: str | None) -> None:
         start(label, port)
         time.sleep(1)
         r = send()
-    print(json.dumps(r.json(), indent=2))
+    if json_out:
+        print(json.dumps(r.json(), indent=2))
+    else:
+        print(r.text)
 
 
 def list_instances() -> None:
@@ -123,6 +129,7 @@ def main() -> None:
     exec_p = sub.add_parser("exec")
     exec_p.add_argument("label", nargs="?", default="default")
     exec_p.add_argument("-e", dest="code")
+    exec_p.add_argument("--json", action="store_true")
 
     sub.add_parser("list")
 
@@ -135,7 +142,7 @@ def main() -> None:
     elif args.cmd == "status":
         status(args.label)
     elif args.cmd == "exec":
-        exec_code(args.label, args.code)
+        exec_code(args.label, args.code, args.json)
     elif args.cmd == "list":
         list_instances()
     else:

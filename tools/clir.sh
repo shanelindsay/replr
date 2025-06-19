@@ -62,20 +62,37 @@ case "$1" in
     label=${2:-default}
     port=$(port_of "$label")
     code=""
+    json=0
     if [[ -t 0 ]] && [[ -z $3 ]]; then
       echo "Nothing to run; supply code with -e or pipe via stdin" >&2
       exit 1
     fi
-    while [[ $# -gt 2 ]]; do shift; [[ $1 == -e ]] && { code="$2"; shift; } done
-    [[ -z $code ]] && code=$(cat)       # read piped input
+    shift 2
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        -e)
+          code="$2"; shift 2;;
+        --json)
+          json=1; shift;;
+        *)
+          shift;;
+      esac
+    done
+    [[ -z $code ]] && code=$(cat)
     if ! curl -s "http://127.0.0.1:${port}/status" >/dev/null; then
       echo "Initializing server for '${label}' on port ${port}..." >&2
       start_instance "$label" "$port"
       sleep 1
     fi
-    curl -s -X POST -H "Content-Type: application/json" \
-         -d "{\"command\":$(jq -Rs . <<<"$code")}" \
-         "http://127.0.0.1:${port}/execute" | jq
+    url="http://127.0.0.1:${port}/execute"
+    [[ $json -eq 1 ]] && url="${url}?plain=false"
+    if [[ $json -eq 1 ]]; then
+      curl -s -X POST -H "Content-Type: application/json" \
+           -d "{\"command\":$(jq -Rs . <<<"$code")}" "$url" | jq
+    else
+      curl -s -X POST -H "Content-Type: application/json" \
+           -d "{\"command\":$(jq -Rs . <<<"$code")}" "$url"
+    fi
     ;;
 
   list)
@@ -84,7 +101,7 @@ case "$1" in
 
   *)
     cat <<EOF
-Usage: clir.sh {start [label] [port]|stop [label]|status [label]|exec [label] -e CODE|exec [label] < script.R|list}
+Usage: clir.sh {start [label] [port]|stop [label]|status [label]|exec [label] [-e CODE] [--json]|exec [label] < script.R|list}
 EOF
     ;;
 esac
