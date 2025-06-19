@@ -3,11 +3,12 @@ channels:
   - conda-forge
 dependencies:
   - r-base
-  - r-testthat        # Unit testing
   - r-processx
   - r-httpuv
   - r-jsonlite
   - r-httr
-  - requests
+  - r-later
   - r-tibble
+  - r-testthat      
+  - requests
 

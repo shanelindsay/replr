@@ -17,9 +17,13 @@ small automation tasks or remote evaluation from other languages.
    micromamba activate myr
    ```
 3. Install the package from GitHub:
-   ```R
+  ```R
 
-   devtools::install_github("shanelindsay/replr")
+  devtools::install_github("shanelindsay/replr")
+  ```
+4. Install Python requirements for the optional CLI tool:
+   ```bash
+   pip install -r requirements.txt
    ```
 
 ## Basic usage
