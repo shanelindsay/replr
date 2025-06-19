@@ -43,9 +43,8 @@ replr::stop_server(port = 8123)
 
 # Executing Code
 
-`exec_code()` sends R expressions to the server for evaluation. The response is
-a list that can include standard output, warnings, errors, plot paths and a
-summary of the result.
+`exec_code()` sends R expressions to the server for evaluation. By default the
+result is returned as plain text.
 
 ```{r exec-code, eval=FALSE}
 # returns console text
@@ -61,8 +60,8 @@ res$result_summary$type
 
 Several arguments let you tailor the response:
 
-- `plain`: return console text (`TRUE`) or JSON (`FALSE`).
-- `summary`: include a summary of the returned value.
+- `plain`: set to `FALSE` to return parsed JSON.
+- `summary`: include a summary of the returned value when JSON is requested.
 - `output`, `warnings`, `error`: toggle these fields in the response.
 
 To change how many rows of a data frame are shown in the summary preview, set

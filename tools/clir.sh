@@ -87,6 +87,8 @@ case "$1" in
     url="http://127.0.0.1:${port}/execute"
     if [[ $json -eq 0 ]]; then
       url="${url}?format=text"
+    else
+      url="${url}?plain=false"
     fi
     curl -s -X POST -H "Content-Type: application/json" \
          -d "{\"command\":$(jq -Rs . <<<"$code")}" \

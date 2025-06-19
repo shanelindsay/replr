@@ -1,7 +1,7 @@
 #' Execute code on the replr server
 #'
-#' Sends R expressions to a running `replr` server and returns console text by
-#' default. Set `plain = FALSE` to request a JSON response. Use
+#' Sends R expressions to a running `replr` server. By default the result is
+#' returned as plain text. Set `plain = FALSE` to receive parsed JSON. Use
 #' `full_results = TRUE` to include the complete result object in the response.
 #'
 #' @param code Character string of R code to evaluate.
@@ -12,9 +12,10 @@
 #' @param full_results Logical; if `TRUE`, bypass summarization and include the
 #'   full result object. This may produce large responses and expose sensitive
 #'   data.
-#' @return A list representing the JSON response from the server.
+#' @return By default a character string of plain text. When `plain = FALSE` a
+#'   list representing the JSON response from the server is returned.
 #' @export
-exec_code <- function(code, port = 8080, plain = TRUE, summary = TRUE,
+exec_code <- function(code, port = 8080, plain = TRUE, summary = FALSE,
                       output = TRUE, warnings = TRUE, error = TRUE,
                       full_results = FALSE) {
   query <- list()
@@ -23,7 +24,7 @@ exec_code <- function(code, port = 8080, plain = TRUE, summary = TRUE,
   } else {
     query$plain <- "false"
   }
-  if (!summary || full_results) query$summary <- "false"
+  if (!summary && !full_results) query$summary <- "false"
   if (!output) query$output <- "false"
   if (!warnings) query$warnings <- "false"
   if (!error) query$error <- "false"

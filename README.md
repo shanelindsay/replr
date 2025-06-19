@@ -42,10 +42,9 @@ Use `server_status()` to confirm the server is running, and `stop_server()` to s
 
 ### Returning full results
 
-`exec_code()` normally returns a summary of the evaluated object. Set
-`full_results = TRUE` to include the entire object in the JSON response.
-Be mindful that this may expose sensitive data or generate very large
-responses.
+`exec_code()` returns plain text by default. Set `plain = FALSE` to obtain a
+parsed JSON response. Use `summary = TRUE` or `full_results = TRUE` to request
+additional detail from the server.
 
 ### Controlling warnings and errors
 
