@@ -1,3 +1,4 @@
+
 # replr
 
 **replr** provides a simple HTTP server for evaluating R code. By default it
@@ -66,6 +67,27 @@ curl -s -X POST -H "Content-Type: application/json" \
   "http://127.0.0.1:8080/execute?warnings=false"
 ```
 
+## Starting and stopping the server
+
+Launch a background server on a custom port:
+
+```R
+start_server(port = 8080, background = TRUE)
+```
+
+Stop that server instance when finished:
+
+```R
+stop_server(port = 8080)
+```
+
+The same operations can be performed from the command line:
+
+```bash
+tools/clir.sh start default 8080
+tools/clir.sh stop 8080
+```
+
 ## Running tests
 
 After activating the `myr` environment, run the unit tests with:
@@ -93,4 +115,3 @@ replr --command "1 + 1" --json
 data frame summaries is controlled by `replr.preview_rows` which defaults to `5`.
 Set this option before starting the server (or via `exec_code()` once running)
 to change how many rows are returned in previews.
-
