@@ -65,6 +65,19 @@ Several arguments let you tailor the response:
 - `summary`: include a summary of the returned value.
 - `output`, `warnings`, `error`: toggle these fields in the response.
 
+To change how many rows of a data frame are shown in the summary preview, set
+the global option `replr.preview_rows`:
+
+```{r preview-option, eval=FALSE}
+options(replr.preview_rows = 10)
+```
+
+Summaries can be disabled entirely:
+
+```{r disable-summary, eval=FALSE}
+replr::exec_code("mean(1:5)", port = 8123, summary = FALSE)
+```
+
 ```{r custom-call, eval=FALSE}
 # return only the calculated value as plain text (default)
 replr::exec_code("sqrt(25)", port = 8123)

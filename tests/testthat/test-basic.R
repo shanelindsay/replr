@@ -9,11 +9,29 @@ test_that("round-trip code returns expected result", {
 
 test_that("plain text mode works", {
   skip_on_cran()
-  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8124, "--background"))
+  ps <- processx::process$new(
+    "Rscript",
+    c(system.file("scripts", "replr_server.R", package = "replr"),
+      "--port", 8124, "--background")
+  )
   on.exit(ps$kill())
   Sys.sleep(1)
-  res <- replr::exec_code("1+1", port=8124, plain = TRUE)
-  expect_match(res, "2")
+  res <- replr::exec_code("1+1", port = 8124, plain = TRUE)
+  expect_type(res, "character")
+  expect_match(res, "\\[1\\] 2")
+})
+
+test_that("explicit plain = FALSE returns JSON", {
+  skip_on_cran()
+  ps <- processx::process$new(
+    "Rscript",
+    c(system.file("scripts", "replr_server.R", package = "replr"),
+      "--port", 8128, "--background")
+  )
+  on.exit(ps$kill())
+  Sys.sleep(1)
+  res <- replr::exec_code("1+1", port = 8128, plain = FALSE)
+  expect_equal(res$result_summary$type, "double")
 })
 
 test_that("warnings can be suppressed", {
