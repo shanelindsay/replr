@@ -34,7 +34,7 @@ start_instance() {
   Rscript "$script" --background --port "$port" >/dev/null 2>&1 &
   local pid=$!
   echo "${label}:${port}:${pid}" >> "${INST_FILE}"
-  echo "Started '${label}' on port ${port} (PID ${pid})"
+  echo "Started '${label}' on port ${port} (PID ${pid})" >&2
 }
 
 case "$1" in
