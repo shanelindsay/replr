@@ -110,6 +110,9 @@ capture_output <- function(expr) {
   withCallingHandlers(
     tryCatch({
       temp_result <- eval(parse(text = expr), envir = .GlobalEnv)
+      if (!is.null(temp_result)) {
+        temp_output <- c(temp_output, capture.output(temp_result))
+      }
       rec_plot <- recordPlot()
       if (dev.cur() > 1 && inherits(rec_plot, "recordedplot") &&
           !identical(rec_plot[[2]], base_plot[[2]])) {
@@ -276,7 +279,7 @@ process_request <- function(req) {
           }
         }
         server_state$last_result <- result
-        response <- list(status = "success")
+        response <- list()
         if (include_output) response$output <- result$output
         if (include_error) response$error <- result$error
         if (include_warnings) response$warning <- result$warning
@@ -285,7 +288,6 @@ process_request <- function(req) {
         if (summary_enabled) response$result_summary <- result$result_summary
         if (nchar(result$error) > 0) {
           server_state$last_error <- result$error
-          response$status <- "error"
         }
         if (plain_text) {
           text_body <- character()
