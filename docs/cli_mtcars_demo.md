@@ -116,7 +116,7 @@ If a command produces a plot, the path is printed even in plain text mode.
 
 ```bash
 $ tools/clir.sh exec demo -e 'plot(mtcars$wt, mtcars$mpg)'
-r_comm/images/plot_20250619_120000_1.png
+demo/images/plot_20250619_120000_1.png
 List of 1
  $ type: chr "NULL"
 ```
@@ -127,7 +127,7 @@ $ tools/clir.sh exec demo -e 'plot(mtcars$wt, mtcars$mpg)' --json
     "status": "success",
     "output": "",
     "error": "",
-  "plots": ["r_comm/images/plot_20250619_120000_1.png"],
+  "plots": ["demo/images/plot_20250619_120000_1.png"],
   "result_summary": {"type": "NULL"}
 }
 ```

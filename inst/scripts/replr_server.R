@@ -62,16 +62,17 @@ if (length(missing_packages) > 0) {
 library(httpuv)
 library(jsonlite)
 
-img_dir <- "r_comm/images"
+base_dir <- Sys.getenv("REPLR_BASE_DIR", "r_comm")
+img_dir <- file.path(base_dir, "images")
 if (!dir.exists(img_dir)) {
   dir.create(img_dir, recursive = TRUE)
 }
 
 server <- NULL
 last_call_time <- Sys.time()
-heartbeat_file <- "r_comm/heartbeat.txt"
-process_state_file <- "r_comm/r_process_state.txt"
-process_pid_file <- "r_comm/r_process_pid.txt"
+heartbeat_file <- file.path(base_dir, "heartbeat.txt")
+process_state_file <- file.path(base_dir, "r_process_state.txt")
+process_pid_file <- file.path(base_dir, "r_process_pid.txt")
 write(Sys.getpid(), process_pid_file)
 
 server_state <- list(

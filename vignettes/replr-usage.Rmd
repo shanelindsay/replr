@@ -121,7 +121,7 @@ exec_code("mean(1:5)", port = 8123, plain = FALSE)$result_summary$type
 ## [1] "double"
 exec_code("plot(1:10)", port = 8123)
 ## $plots
-## [1] "r_comm/images/plot_20250618_203333_4.png"
+## [1] "demo/images/plot_20250618_203333_4.png"
 exec_code("warning('demo')", port = 8123)
 ## $warning
 ## [1] "demo"
