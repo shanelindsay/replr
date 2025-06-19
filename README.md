@@ -48,3 +48,12 @@ micromamba activate myr
 R -q -e "devtools::test()"
 ```
 
+## Command line usage
+
+Evaluate a single expression directly from the shell using the `--command`
+option. Quote the expression so it is passed as one argument:
+
+```bash
+replr --command "1 + 1"
+```
+
