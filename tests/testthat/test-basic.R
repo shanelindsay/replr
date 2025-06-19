@@ -34,3 +34,13 @@ test_that("errors are captured correctly", {
   expect_equal(res$output, "")
   expect_match(res$error, "non-numeric")
 })
+
+test_that("full results are returned when requested", {
+  skip_on_cran()
+  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8127, "--background"))
+  on.exit(ps$kill())
+  Sys.sleep(1)
+  res <- replr::exec_code("list(a = 1:3)", port = 8127, full_results = TRUE)
+  expect_equal(unlist(res$result$a), 1:3)
+  expect_false("result_summary" %in% names(res))
+})
