@@ -103,6 +103,10 @@ case "$1" in
   *)
     cat <<EOF
 Usage: clir.sh {start [label] [port]|stop [label]|status [label]|exec [label] [-e CODE] [--json]|exec [label] < script.R|list}
+
+When '--json' is supplied to 'exec', the server responds with
+a JSON object containing: output, warning, error, plots,
+result_summary and result.
 EOF
     ;;
 esac
