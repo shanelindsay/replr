@@ -14,7 +14,8 @@ the background.
 - `stop_server(port = 8080)` — sends a shutdown request to the server.
 - `exec_code(code, port = 8080, plain = FALSE, summary = TRUE, output = TRUE,
   warnings = TRUE, error = TRUE)` — submit R code to the running server and
-  return the parsed JSON response. Setting `plain = TRUE` returns plain text.
+  return the parsed JSON response. Setting `plain = TRUE` returns the value
+  and messages as plain text.
 - `server_status(port = 8080)` — retrieve basic information such as uptime and
   process id.
 
