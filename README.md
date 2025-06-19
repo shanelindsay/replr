@@ -39,6 +39,26 @@ Use `server_status()` to confirm the server is running, and `stop_server()` to s
 Be mindful that this may expose sensitive data or generate very large
 responses.
 
+### Controlling warnings and errors
+
+By default the server captures any warnings and errors just as they would
+appear in an interactive R session. These messages are returned in the JSON
+response under the `warning` and `error` fields. To silence them you can set
+`warnings = FALSE` or `error = FALSE`:
+
+```R
+exec_code("warning('oops'); 1", port = 8080, warnings = FALSE)
+exec_code("log('foo')", port = 8080, error = FALSE)
+```
+
+When using `curl` directly you can pass query parameters:
+
+```bash
+curl -s -X POST -H "Content-Type: application/json" \
+  -d '{"command":"warning(\"hi\");1"}' \
+  "http://127.0.0.1:8080/execute?warnings=false"
+```
+
 ## Running tests
 
 After activating the `myr` environment, run the unit tests with:
