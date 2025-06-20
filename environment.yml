@@ -4,8 +4,8 @@ channels:
 dependencies:
   - r-base
   - r-processx
-  - r-httpuv
-  - r-jsonlite
+  - r-httpuv      # required by replr_server
+  - r-jsonlite    # required by replr_server
   - r-httr
   - r-later
   - r-tibble

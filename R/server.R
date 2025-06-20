@@ -1,7 +1,7 @@
-start_server <- function(port = 8080, background = FALSE) {
+start_server <- function(port = 8080, host = "127.0.0.1", background = FALSE) {
   script <- system.file("scripts", "replr_server.R", package = "replr")
-  cmd <- sprintf('Rscript "%s" --port %d %s',
-                 script, as.integer(port),
+  cmd <- sprintf('Rscript "%s" --port %d --host %s %s',
+                 script, as.integer(port), shQuote(host),
                  if (background) "--background" else "")
   system(cmd, wait = !background, invisible = TRUE)
 }

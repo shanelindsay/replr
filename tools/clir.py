@@ -22,6 +22,7 @@ import requests
 CONFIG_DIR = os.path.expanduser("~/.replr")
 INST_FILE = os.path.join(CONFIG_DIR, "instances")
 DEFAULT_PORT = 8080
+DEFAULT_HOST = "127.0.0.1"
 
 
 def load_instances() -> Dict[str, Tuple[int, int]]:
@@ -51,7 +52,7 @@ def port_of(label: str, instances: Dict[str, Tuple[int, int]]) -> int:
         return DEFAULT_PORT
 
 
-def start(label: str, port: int) -> None:
+def start(label: str, port: int, host: str) -> None:
     inst = load_instances()
     try:
         script_path = resources.files("replr").joinpath("scripts", "replr_server.R")
@@ -71,32 +72,32 @@ def start(label: str, port: int) -> None:
     )
     inst[label] = (port, proc.pid)
     save_instances(inst)
-    print(f"Started '{label}' on port {port} (PID {proc.pid})")
+    print(f"Started '{label}' on {host}:{port} (PID {proc.pid})")
 
 
-def stop(label: str) -> None:
+def stop(label: str, host: str) -> None:
     inst = load_instances()
     port = port_of(label, inst)
     try:
-        requests.post(f"http://127.0.0.1:{port}/shutdown")
+        requests.post(f"http://{host}:{port}/shutdown")
     finally:
         if label in inst:
             inst.pop(label)
             save_instances(inst)
-    print(f"Sent shutdown to '{label}' (port {port})")
+    print(f"Sent shutdown to '{label}' on {host} (port {port})")
 
 
-def status(label: str, json_out: bool = False) -> None:
+def status(label: str, json_out: bool = False, host: str = DEFAULT_HOST) -> None:
     inst = load_instances()
     port = port_of(label, inst)
-    r = requests.get(f"http://127.0.0.1:{port}/status")
+    r = requests.get(f"http://{host}:{port}/status")
     if json_out:
         print(json.dumps(r.json(), indent=2))
     else:
         print(r.text)
 
 
-def exec_code(label: str, code: str | None, json_out: bool = False) -> None:
+def exec_code(label: str, code: str | None, json_out: bool = False, host: str = DEFAULT_HOST) -> None:
     inst = load_instances()
     port = port_of(label, inst)
     if not code:
@@ -105,7 +106,7 @@ def exec_code(label: str, code: str | None, json_out: bool = False) -> None:
             print("Nothing to run; supply code with -e or pipe via stdin", file=sys.stderr)
             sys.exit(1)
     def send() -> requests.Response:
-        url = f"http://127.0.0.1:{port}/execute"
+        url = f"http://{host}:{port}/execute"
         if not json_out:
             url += "?format=text"
         else:
@@ -115,8 +116,8 @@ def exec_code(label: str, code: str | None, json_out: bool = False) -> None:
     try:
         r = send()
     except requests.exceptions.ConnectionError:
-        print(f"Initializing server for '{label}' on port {port}...", file=sys.stderr)
-        start(label, port)
+        print(f"Initializing server for '{label}' on {host} port {port}...", file=sys.stderr)
+        start(label, port, host)
         time.sleep(1)
         r = send()
     if json_out:
@@ -138,31 +139,35 @@ def main() -> None:
     sp = sub.add_parser("start")
     sp.add_argument("label", nargs="?", default="default")
     sp.add_argument("port", nargs="?", type=int, default=DEFAULT_PORT)
+    sp.add_argument("host", nargs="?", default=DEFAULT_HOST)
 
     stop_p = sub.add_parser("stop")
     stop_p.add_argument("label", nargs="?", default="default")
+    stop_p.add_argument("host", nargs="?", default=DEFAULT_HOST)
 
     status_p = sub.add_parser("status")
     status_p.add_argument("label", nargs="?", default="default")
+    status_p.add_argument("host", nargs="?", default=DEFAULT_HOST)
     status_p.add_argument("--json", action="store_true")
 
     exec_p = sub.add_parser("exec")
     exec_p.add_argument("label", nargs="?", default="default")
     exec_p.add_argument("-e", dest="code")
     exec_p.add_argument("--json", action="store_true")
+    exec_p.add_argument("host", nargs="?", default=DEFAULT_HOST)
 
     sub.add_parser("list")
 
     args = parser.parse_args()
 
     if args.cmd == "start":
-        start(args.label, args.port)
+        start(args.label, args.port, args.host)
     elif args.cmd == "stop":
-        stop(args.label)
+        stop(args.label, args.host)
     elif args.cmd == "status":
-        status(args.label, args.json)
+        status(args.label, args.json, args.host)
     elif args.cmd == "exec":
-        exec_code(args.label, args.code, args.json)
+        exec_code(args.label, args.code, args.json, args.host)
     elif args.cmd == "list":
         list_instances()
     else:
