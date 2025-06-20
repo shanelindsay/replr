@@ -133,3 +133,13 @@ replr --command "1 + 1" --json
 data frame summaries is controlled by `replr.preview_rows` which defaults to `5`.
 Set this option before starting the server (or via `exec_code()` once running)
 to change how many rows are returned in previews.
+
+## Building and checking the package
+
+Use `tools/release_cran.R` to build a source tarball and run `R CMD check`.
+Ensure the `myr` environment is active so all dependencies are available.
+
+```bash
+micromamba activate myr
+Rscript tools/release_cran.R
+```
