@@ -63,6 +63,12 @@ switch ($cmd) {
         $resp = Invoke-RestMethod -Uri "http://$host:$port/status"
         if ($json) { $resp | ConvertTo-Json -Depth 10 } else { $resp }
     }
+    'state' {
+        $label = if ($args.Length -gt 1) { $args[1] } else { 'default' }
+        $host = if ($args.Length -gt 2) { $args[2] } else { $defaultHost }
+        $port = Port-Of $label $inst
+        Invoke-RestMethod -Uri "http://$host:$port/state" | ConvertTo-Json -Depth 10
+    }
     'exec' {
         $label = if ($args.Length -gt 1) { $args[1] } else { 'default' }
         $code = $null
@@ -87,6 +93,6 @@ switch ($cmd) {
         Get-Content $instFile
     }
     default {
-        Write-Output "Usage: clir.ps1 {start [label] [port] [host]|stop [label] [host]|status [label] [host] [--json]|exec [label] [-e CODE] [--json] [host]|list}"
+        Write-Output "Usage: clir.ps1 {start [label] [port] [host]|stop [label] [host]|status [label] [host] [--json]|state [label] [host]|exec [label] [-e CODE] [--json] [host]|list}"
     }
 }

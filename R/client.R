@@ -54,3 +54,19 @@ server_status <- function(port = 8080) {
   res <- httr::GET(url)
   jsonlite::fromJSON(httr::content(res, as = "text", encoding = "UTF-8"))
 }
+
+#' Retrieve extended server state information
+#'
+#' This queries the `/state` endpoint of a running `replr` server which
+#' returns additional details such as the last executed command and the
+#' currently defined global variables.
+#'
+#' @param port Server port number. Defaults to `8080`.
+#' @return A list parsed from the JSON response of the endpoint.
+#' @export
+server_state <- function(port = 8080) {
+  url <- sprintf("http://127.0.0.1:%d/state", as.integer(port))
+  res <- httr::GET(url)
+  jsonlite::fromJSON(httr::content(res, as = "text", encoding = "UTF-8"),
+                     simplifyVector = FALSE)
+}

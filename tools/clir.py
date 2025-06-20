@@ -97,6 +97,13 @@ def status(label: str, json_out: bool = False, host: str = DEFAULT_HOST) -> None
         print(r.text)
 
 
+def state(label: str, host: str = DEFAULT_HOST) -> None:
+    inst = load_instances()
+    port = port_of(label, inst)
+    r = requests.get(f"http://{host}:{port}/state")
+    print(json.dumps(r.json(), indent=2))
+
+
 def exec_code(label: str, code: str | None, json_out: bool = False, host: str = DEFAULT_HOST) -> None:
     inst = load_instances()
     port = port_of(label, inst)
@@ -150,6 +157,10 @@ def main() -> None:
     status_p.add_argument("host", nargs="?", default=DEFAULT_HOST)
     status_p.add_argument("--json", action="store_true")
 
+    state_p = sub.add_parser("state")
+    state_p.add_argument("label", nargs="?", default="default")
+    state_p.add_argument("host", nargs="?", default=DEFAULT_HOST)
+
     exec_p = sub.add_parser("exec")
     exec_p.add_argument("label", nargs="?", default="default")
     exec_p.add_argument("-e", dest="code")
@@ -166,6 +177,8 @@ def main() -> None:
         stop(args.label, args.host)
     elif args.cmd == "status":
         status(args.label, args.json, args.host)
+    elif args.cmd == "state":
+        state(args.label, args.host)
     elif args.cmd == "exec":
         exec_code(args.label, args.code, args.json, args.host)
     elif args.cmd == "list":
