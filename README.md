@@ -60,8 +60,9 @@ Use `server_status()` to confirm the server is running, and `stop_server()` to s
 ### Returning full results
 
 `exec_code()` returns plain text by default. Set `plain = FALSE` to obtain a
-parsed JSON response. Use `summary = TRUE` or `full_results = TRUE` to request
-additional detail from the server.
+parsed JSON response. The returned list carries the class `"rjson_response"`,
+allowing helpers like `as_tibble()` to work. Use `summary = TRUE` or
+`full_results = TRUE` to request additional detail from the server.
 
 ### Controlling warnings and errors
 
@@ -133,3 +134,23 @@ replr --command "1 + 1" --json
 data frame summaries is controlled by `replr.preview_rows` which defaults to `5`.
 Set this option before starting the server (or via `exec_code()` once running)
 to change how many rows are returned in previews.
+
+## Citing replr
+
+If you use **replr** in your work, please cite it. Run the following in R to get the citation information:
+
+```R
+citation("replr")
+```
+
+The output corresponds to the information stored in the `CITATION` file included with the package.
+
+## Building and checking the package
+
+Use `tools/release_cran.R` to build a source tarball and run `R CMD check`.
+Ensure the `myr` environment is active so all dependencies are available.
+
+```bash
+micromamba activate myr
+Rscript tools/release_cran.R
+```

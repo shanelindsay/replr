@@ -1,0 +1,8 @@
+citHeader("To cite package 'replr' in publications use:")
+
+bibentry(
+  "Manual",
+  title = "replr: Local HTTP/JSON REPL for R",
+  author = person("Shane", "Lindsay", email = "shane.lindsay@gmail.com", role = c("aut", "cre")),
+  note = "R package version 0.0.1"
+)
