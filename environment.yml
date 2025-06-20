@@ -9,6 +9,7 @@ dependencies:
   - r-httr
   - r-later
   - r-tibble
-  - r-testthat      
+  - r-testthat
+  - r-roxygen2
   - requests
 
