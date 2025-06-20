@@ -8,3 +8,4 @@ Encoding: UTF-8
 Depends: R (>= 3.5.0)
 Imports: httpuv, jsonlite, utils, httr, later, tibble
 Suggests: testthat, processx
+RoxygenNote: 7.3.2

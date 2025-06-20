@@ -46,6 +46,14 @@ exec_code <- function(code, port = 8080, plain = TRUE, summary = FALSE,
   }
 }
 
+#' Query the status of a running replr server
+#'
+#' Retrieves basic status information from the server such as uptime and
+#' version details.
+#'
+#' @param port Port number that the server is listening on.
+#' @return A list parsed from the JSON status response.
+#' @export
 server_status <- function(port = 8080) {
   url <- sprintf("http://127.0.0.1:%d/status", as.integer(port))
   res <- httr::GET(url)
