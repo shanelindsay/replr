@@ -133,3 +133,13 @@ replr --command "1 + 1" --json
 data frame summaries is controlled by `replr.preview_rows` which defaults to `5`.
 Set this option before starting the server (or via `exec_code()` once running)
 to change how many rows are returned in previews.
+
+## Citing replr
+
+If you use **replr** in your work, please cite it. Run the following in R to get the citation information:
+
+```R
+citation("replr")
+```
+
+The output corresponds to the information stored in the `CITATION` file included with the package.
