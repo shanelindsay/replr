@@ -8,6 +8,7 @@ args <- commandArgs(trailingOnly = TRUE)
 run_mode <- "interactive"  # Default mode
 command_to_run <- NULL
 port <- 8080  # Default port
+host <- "127.0.0.1"  # Default host
 if (is.null(getOption("replr.preview_rows"))) {
   options(replr.preview_rows = 5)
 }
@@ -35,12 +36,20 @@ if (length(args) > 0) {
       } else {
         stop("Missing port number after --port|-p")
       }
+    } else if (args[i] == "--host" || args[i] == "-H") {
+      if (i + 1 <= length(args)) {
+        host <- args[i + 1]
+        i <- i + 2
+      } else {
+        stop("Missing host after --host|-H")
+      }
     } else if (args[i] == "--help" || args[i] == "-h") {
       cat("Usage: Rscript replr_server.R [options]\n")
       cat("Options:\n")
       cat("  --background, -b     Run in background mode\n")
       cat("  --command, -c CMD    Execute a single command and exit\n")
       cat("  --port, -p PORT      Specify the port (default: 8080)\n")
+      cat("  --host, -H HOST      Specify the host (default: 127.0.0.1)\n")
       cat("  --help, -h           Show this help message\n")
       quit(save = "no", status = 0)
     } else {
@@ -342,9 +351,9 @@ app <- list(
 )
 
 if (run_mode == "interactive" || run_mode == "background") {
-  cat("Starting R JSON server on port", port, "\n")
+  cat("Starting R JSON server on", host, "port", port, "\n")
   cat("Server PID:", Sys.getpid(), "\n")
-  server <<- startServer("127.0.0.1", port, app)
+  server <<- startServer(host, port, app)
   if (exists("tools::.signal_interruptible")) {
     tools::.signal_interruptible(2, function(sig) {
       cat("Received interrupt signal. Shutting down...\n")

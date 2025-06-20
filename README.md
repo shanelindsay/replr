@@ -33,7 +33,7 @@ Start the server and execute some code:
 ```R
 library(replr)
 
-start_server(port = 8080, background = TRUE)
+start_server(port = 8080, host = "127.0.0.1", background = TRUE)
 
 # returns console text
 exec_code("1 + 1", port = 8080)
@@ -82,7 +82,7 @@ curl -s -X POST -H "Content-Type: application/json" \
 Launch a background server on a custom port:
 
 ```R
-start_server(port = 8080, background = TRUE)
+start_server(port = 8080, host = "127.0.0.1", background = TRUE)
 ```
 
 Stop that server instance when finished:
@@ -94,8 +94,8 @@ stop_server(port = 8080)
 The same operations can be performed from the command line:
 
 ```bash
-tools/clir.sh start default 8080
-tools/clir.sh stop 8080
+tools/clir.sh start default 8080 127.0.0.1
+tools/clir.sh stop 8080 127.0.0.1
 ```
 
 ## Running tests

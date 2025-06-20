@@ -1,6 +1,6 @@
 test_that("default preview_rows is 5", {
   skip_on_cran()
-  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8130, "--background"))
+  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8130, "--host", "127.0.0.1", "--background"))
   on.exit(ps$kill())
   Sys.sleep(1)
 
@@ -10,7 +10,7 @@ test_that("default preview_rows is 5", {
 
 test_that("preview_rows option can be changed", {
   skip_on_cran()
-  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8131, "--background"))
+  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8131, "--host", "127.0.0.1", "--background"))
   on.exit(ps$kill())
   Sys.sleep(1)
   replr::exec_code("options(replr.preview_rows=3)", port=8131, plain = FALSE)
