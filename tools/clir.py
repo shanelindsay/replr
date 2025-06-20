@@ -12,7 +12,10 @@ import os
 import subprocess
 import sys
 import time
+from pathlib import Path
 from typing import Dict, Tuple
+
+from importlib import resources
 
 import requests
 
@@ -50,13 +53,22 @@ def port_of(label: str, instances: Dict[str, Tuple[int, int]]) -> int:
 
 def start(label: str, port: int) -> None:
     inst = load_instances()
-    proc = subprocess.Popen([
-        "Rscript",
-        "replr_server.R",
-        "--background",
-        "--port",
-        str(port),
-    ])
+    try:
+        script_path = resources.files("replr").joinpath("scripts", "replr_server.R")
+    except Exception:
+        script_path = Path(__file__).resolve().parent.parent / "inst" / "scripts" / "replr_server.R"
+    proc = subprocess.Popen(
+        [
+            "Rscript",
+            str(script_path),
+            "--background",
+            "--port",
+            str(port),
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
     inst[label] = (port, proc.pid)
     save_instances(inst)
     print(f"Started '{label}' on port {port} (PID {proc.pid})")

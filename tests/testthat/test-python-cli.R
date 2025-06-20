@@ -1,0 +1,17 @@
+test_that("clir.py start works from another directory", {
+  skip_on_cran()
+  script <- normalizePath(file.path("..", "..", "tools", "clir.py"))
+  tmp <- tempfile("clirpy")
+  dir.create(tmp)
+  old <- getwd()
+  setwd(tmp)
+  on.exit({
+    setwd(old)
+    processx::run("python3", c(script, "stop", "clitest"), error_on_status = FALSE)
+  })
+  out <- processx::run("python3", c(script, "start", "clitest", "8140"), error_on_status = FALSE)
+  expect_equal(out$status, 0)
+  Sys.sleep(1)
+  st <- replr::server_status(8140)
+  expect_equal(st$status, "running")
+})
