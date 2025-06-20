@@ -70,6 +70,13 @@ case "$1" in
     curl -s "http://${host}:${port}/status"
     ;;
 
+  state)
+    label=${2:-default}
+    host=${3:-$DEFAULT_HOST}
+    port=$(port_of "$label")
+    curl -s "http://${host}:${port}/state"
+    ;;
+
   exec)
     label=${2:-default}
     port=$(port_of "$label")
@@ -115,7 +122,7 @@ case "$1" in
 
   *)
     cat <<EOF
-Usage: clir.sh {start [label] [port] [host]|stop [label] [host]|status [label] [host]|exec [label] [-e CODE] [--json] [host]|list}
+Usage: clir.sh {start [label] [port] [host]|stop [label] [host]|status [label] [host]|state [label] [host]|exec [label] [-e CODE] [--json] [host]|list}
 
 When '--json' is supplied to 'exec', the server responds with
 a JSON object containing: output, warning, error, plots,
