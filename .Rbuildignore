@@ -1,0 +1,4 @@
+^docs$
+^tools$
+^environment\.yml$
+^requirements\.txt$
