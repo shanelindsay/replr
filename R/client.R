@@ -13,7 +13,9 @@
 #'   full result object. This may produce large responses and expose sensitive
 #'   data.
 #' @return By default a character string of plain text. When `plain = FALSE` a
-#'   list representing the JSON response from the server is returned.
+#'   list representing the JSON response from the server is returned. The JSON
+#'   list has class `"rjson_response"` so methods like `as_tibble()` can
+#'   dispatch on it.
 #' @export
 exec_code <- function(code, port = 8080, plain = TRUE, summary = FALSE,
                       output = TRUE, warnings = TRUE, error = TRUE,
@@ -42,6 +44,7 @@ exec_code <- function(code, port = 8080, plain = TRUE, summary = FALSE,
   } else {
     out <- jsonlite::fromJSON(httr::content(res, as = "text", encoding = "UTF-8"), simplifyVector = FALSE)
     if (!warnings) out$warning <- NULL
+    class(out) <- c("rjson_response", class(out))
     out
   }
 }

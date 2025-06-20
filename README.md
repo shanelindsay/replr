@@ -60,8 +60,9 @@ Use `server_status()` to confirm the server is running, and `stop_server()` to s
 ### Returning full results
 
 `exec_code()` returns plain text by default. Set `plain = FALSE` to obtain a
-parsed JSON response. Use `summary = TRUE` or `full_results = TRUE` to request
-additional detail from the server.
+parsed JSON response. The returned list carries the class `"rjson_response"`,
+allowing helpers like `as_tibble()` to work. Use `summary = TRUE` or
+`full_results = TRUE` to request additional detail from the server.
 
 ### Controlling warnings and errors
 
