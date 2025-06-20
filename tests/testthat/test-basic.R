@@ -1,6 +1,6 @@
 test_that("round-trip code returns expected result", {
   skip_on_cran()
-  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8123, "--background"))
+  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8123, "--host", "127.0.0.1", "--background"))
   on.exit(ps$kill())
   wait_for_server(8123)
   res <- replr::exec_code("1+1", port=8123, plain = FALSE, summary = TRUE)
@@ -13,7 +13,7 @@ test_that("plain text mode works", {
   ps <- processx::process$new(
     "Rscript",
     c(system.file("scripts", "replr_server.R", package = "replr"),
-      "--port", 8124, "--background")
+      "--port", 8124, "--host", "127.0.0.1", "--background")
   )
   on.exit(ps$kill())
   wait_for_server(8124)
@@ -27,7 +27,7 @@ test_that("explicit plain = FALSE returns JSON", {
   ps <- processx::process$new(
     "Rscript",
     c(system.file("scripts", "replr_server.R", package = "replr"),
-      "--port", 8128, "--background")
+      "--port", 8128, "--host", "127.0.0.1", "--background")
   )
   on.exit(ps$kill())
   wait_for_server(8128)
@@ -37,7 +37,7 @@ test_that("explicit plain = FALSE returns JSON", {
 
 test_that("warnings can be suppressed", {
   skip_on_cran()
-  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8125, "--background"))
+  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8125, "--host", "127.0.0.1", "--background"))
   on.exit(ps$kill())
   wait_for_server(8125)
   res <- replr::exec_code("warning('a'); 1", port=8125, warnings = FALSE,
@@ -47,7 +47,7 @@ test_that("warnings can be suppressed", {
 
 test_that("errors are captured correctly", {
   skip_on_cran()
-  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8126, "--background"))
+  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8126, "--host", "127.0.0.1", "--background"))
   on.exit(ps$kill())
   wait_for_server(8126)
   res <- replr::exec_code("log('foo')", port=8126, plain = FALSE, summary = TRUE)
@@ -57,7 +57,7 @@ test_that("errors are captured correctly", {
 
 test_that("full results are returned when requested", {
   skip_on_cran()
-  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8127, "--background"))
+  ps <- processx::process$new("Rscript", c(system.file("scripts", "replr_server.R", package="replr"), "--port", 8127, "--host", "127.0.0.1", "--background"))
   on.exit(ps$kill())
   wait_for_server(8127)
   res <- replr::exec_code("list(a = 1:3)", port = 8127, full_results = TRUE,
