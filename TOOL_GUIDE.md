@@ -27,7 +27,7 @@ commands to adjust how many rows are shown in previews.
 ## Bash command line (tools/clir.sh)
 
 The `tools` directory contains small clients for shells. The Bash script
-`clir.sh` provides several subcommands:
+`clir.sh` requires `jq` for encoding JSON and provides several subcommands:
 
 ```bash
 clir.sh start [label] [port]     # start server and record instance

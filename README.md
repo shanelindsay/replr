@@ -19,11 +19,15 @@ small automation tasks or remote evaluation from other languages.
 3. Install the package from GitHub:
   ```R
 
-  devtools::install_github("shanelindsay/replr")
+ devtools::install_github("shanelindsay/replr")
   ```
 4. Install Python requirements for the optional CLI tool:
    ```bash
    pip install -r requirements.txt
+   ```
+5. Install `jq`, required by `clir.sh` for encoding JSON:
+   ```bash
+   sudo apt-get install jq  # or use your package manager
    ```
 
 ## Basic usage
