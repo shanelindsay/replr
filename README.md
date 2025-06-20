@@ -143,3 +143,13 @@ citation("replr")
 ```
 
 The output corresponds to the information stored in the `CITATION` file included with the package.
+
+## Building and checking the package
+
+Use `tools/release_cran.R` to build a source tarball and run `R CMD check`.
+Ensure the `myr` environment is active so all dependencies are available.
+
+```bash
+micromamba activate myr
+Rscript tools/release_cran.R
+```
