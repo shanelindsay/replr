@@ -50,15 +50,6 @@ if (length(args) > 0) {
   }
 }
 
-# Check for required packages
-required_packages <- c("httpuv", "jsonlite")
-missing_packages <- required_packages[!sapply(required_packages, function(p) requireNamespace(p, quietly = TRUE))]
-
-if (length(missing_packages) > 0) {
-  cat("Installing missing packages:", paste(missing_packages, collapse = ", "), "\n")
-  install.packages(missing_packages, repos = "https://cran.rstudio.com/")
-}
-
 library(httpuv)
 library(jsonlite)
 

@@ -8,7 +8,9 @@ small automation tasks or remote evaluation from other languages.
 
 ## Installation with micromamba
 
-1. Create the `myr` environment using the provided `environment.yml`:
+1. Create the `myr` environment using the provided `environment.yml`.
+   This file lists required R packages such as `r-httpuv` and `r-jsonlite` used
+   by the server.
    ```bash
    micromamba env create -f environment.yml
    ```
