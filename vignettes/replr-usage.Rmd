@@ -16,7 +16,8 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 `replr` provides a lightweight HTTP server that executes R code. By default the
 server returns the console text produced by the expression. Set `plain = FALSE`
-to receive structured JSON instead. This vignette demonstrates the core
+to receive structured JSON instead. The returned list has class
+`"rjson_response"`, enabling helper methods such as `as_tibble()`. This vignette demonstrates the core
 features for interacting with the server from R.
 
 # Starting and Stopping the Server
