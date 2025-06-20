@@ -2,6 +2,12 @@
 #
 # Very small CLI for the R JSON server described earlier.
 
+# Ensure jq is available for JSON encoding
+if ! command -v jq >/dev/null 2>&1; then
+  echo "Error: jq is required but was not found in PATH." >&2
+  exit 1
+fi
+
 CONFIG_DIR="${HOME}/.replr"
 INST_FILE="${CONFIG_DIR}/instances"
 DEFAULT_PORT=8080
