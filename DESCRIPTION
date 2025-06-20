@@ -8,3 +8,5 @@ Encoding: UTF-8
 Depends: R (>= 3.5.0)
 Imports: httpuv, jsonlite, utils, httr, later, tibble
 Suggests: testthat, processx
+URL: https://github.com/shanelindsay/replr
+BugReports: https://github.com/shanelindsay/replr/issues
